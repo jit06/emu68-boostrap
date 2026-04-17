@@ -1,0 +1,43 @@
+###############################################
+# config file optimized for Pistorm32 with CM4
+###############################################
+
+disable_splash=1
+arm_64bit=1
+arm_boost=1
+otg_mode=1
+boot_delay=0
+
+# Limit total memory size to 2GB for now. Necessary for CM4/Pi4
+total_mem=2048
+
+# This is important so that GPU firmware does not add its overlay icons on the screen
+# If you also want to disable speed throttling in case of undervoltage, set this value to 2
+avoid_warnings=2
+
+# Enable the options below to increase speed of ARM cpu
+#force_turbo=1
+#over_voltage=4
+#arm_freq=1800
+#core_freq=500
+#sdram_freq=600
+
+hdmi_force_hotplug=1
+
+# Limit GPU memory a little, force 1080p video mode. Comment out the hdmi_mode line if your monitor
+# does not like it. For list of all modes please refer to RasPi documentation
+# https://www.raspberrypi.com/documentation/computers/config_txt.html#hdmi-mode
+gpu_mem=32
+hdmi_group=2
+config_hdmi_boost=7
+hdmi_mode=16 # 1024x768  60Hz
+
+kernel=Emu68-pistorm32lite
+
+# stealth mode if 3sec reset
+[gpio4=0]
+initramfs ps32lite-stealth-firmware.gz
+
+#normal mode
+[gpio4=1]
+initramfs kick.rom
