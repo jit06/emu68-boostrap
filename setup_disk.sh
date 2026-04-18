@@ -113,19 +113,17 @@ done
 
 check_dependencies
 
-# --- Process ---
-
-# 1. Workspace preparation
+# Workspace preparation
 rm -rf "$TMP_DIR" && mkdir -p "$TMP_DIR/emu68_files"
 cp contribs/ps32lite-stealth-firmware.gz "$TMP_DIR/emu68_files/"
 cp contribs/pfs3aio "$TMP_DIR/"
 cd "$TMP_DIR"
 
-# 2. Setup hst.imager
+# Setup hst.imager
 get_hst_imager
 HST_BIN="./hst.imager"
 
-# 3. Download Emu68
+# Download Emu68
 log_info "Downloading latest Emu68 release..."
 wget -q --show-progress "$EMU68_RELEASE_URL" -O emu68.zip
 if [[ $? -ne 0 ]]; then
@@ -134,15 +132,14 @@ fi
 unzip -q emu68.zip -d emu68_files
 log_success "Emu68 downloaded and extracted."
 
-# 5. Prepare Partition Script
+# Prepare Partition Script
 log_info "Preparing partition config file for $DISK_PATH..."
 if [[ ! -f "$OLDPWD/partitions.config" ]]; then
     log_error "Template partitions.config not found in working directory."
 fi
-# Replace placeholder with actual disk path [cite: 1, 2]
 sed "s|\[PATH_TO_DISK\]|$DISK_PATH|g" "$OLDPWD/partitions.config" > generated_partitions.config
 
-# 6. Execute hst.imager
+# Execute hst.imager
 log_info "Initializing disk and creating partitions..."
 $HST_BIN script generated_partitions.config
 if [[ $? -ne 0 ]]; then
@@ -150,21 +147,19 @@ if [[ $? -ne 0 ]]; then
 fi
 log_success "Disk partitioned and RDB initialized."
 
-# 7. Prepare Boot Files
+# Prepare emu68
 log_info "Setting up EMU68 boot partition..."
 [[ -n "$CUSTOM_CONFIG" ]] && cp "$CUSTOM_CONFIG" emu68_files/config.txt
 [[ -n "$CUSTOM_CMDLINE" ]] && cp "$CUSTOM_CMDLINE" emu68_files/cmdline.txt
 cp "$KICKSTART_PATH" emu68_files/kick.rom
 
-# 8. Copy files to SD Card
+# mount freshly created emu68 partition 
 mkdir -p "$MOUNT_POINT"
 partprobe "$DISK_PATH"
 sleep 2 
-
-# Mount the first MBR partition (EMU68 FAT32)
-# Note: Using 'mount' directly; user is already root.
 mount "${DISK_PATH}1" "$MOUNT_POINT" || log_error "Failed to mount ${DISK_PATH}1"
 
+# copy emu68 files to partition
 log_info "Copying files to ${DISK_PATH}1..."
 cp -r emu68_files/* "$MOUNT_POINT/"
 sync
