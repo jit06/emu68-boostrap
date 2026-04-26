@@ -30,11 +30,11 @@ usage() {
 }
 
 log_info() {
-    echo -e "[\e[34mINFO\e[0m] $1"
+    echo -e "[\e[34mINFO \e[0m] $1"
 }
 
 log_success() {
-    echo -e "[\e[32mOK\e[0m] $1"
+    echo -e "[\e[32m OK  \e[0m] $1"
 }
 
 log_error() {
@@ -141,7 +141,7 @@ sed "s|\[PATH_TO_DISK\]|$DISK_PATH|g" "$OLDPWD/partitions.config" > generated_pa
 
 # Execute hst.imager
 log_info "Initializing disk and creating partitions..."
-$HST_BIN script generated_partitions.config
+$HST_BIN script generated_partitions.config > /dev/null
 if [[ $? -ne 0 ]]; then
     log_error "could not initialize disk with : $HST_BIN script generated_partitions.config"
 fi

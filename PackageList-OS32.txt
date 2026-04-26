@@ -1,0 +1,14 @@
+Workbench32     AmigaOS_ADF/Workbench3.2.adf
+Extras32        AmigaOS_ADF/Extras3.2.adf
+Install32       AmigaOS_ADF/Install3.2.adf
+Backdrops32     AmigaOS_ADF/Backdrops3.2.adf
+Classes32       AmigaOS_ADF/Classes3.2.adf
+DiskDoctor      AmigaOS_ADF/DiskDoctor.adf
+Fonts           AmigaOS_ADF/Fonts.adf
+Locale          AmigaOS_ADF/Locale.adf
+Storage32       AmigaOS_ADF/Storage3.2.adf
+Classes323      AmigaOSUpdate_ADF/Classes3.2.3.adf
+DiskDoctor323   AmigaOSUpdate_ADF/DiskDoctor3.2.3.adf
+Extras323       AmigaOSUpdate_ADF/Extras3.2.3.adf
+Update323       AmigaOSUpdate_ADF/Update3.2.3.adf
+GlowIcons32     AmigaOS_ADF/GlowIcons3.2.adf
