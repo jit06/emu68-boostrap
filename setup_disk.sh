@@ -1,19 +1,22 @@
 #!/bin/bash
 
 # ==============================================================================
-# Script Name: setup_disk.sh
-# Description: Initialize SD Card for PiStorm32-lite / Emu68 using hst-imager
+# Disk setup script
+# The main purpose is to partition disk both for emu68 and AmigaOS 
+# 
+# The partitioning is based on "partitions.config" file. It create a new MBR
+# structure with 2 partitions
+#   - part 1 : fat32, dedicated to emu68 (which is autoamtically installed
+#   - part 2 : 0x76, contains Amiga RDB partitions which are formated
 # ==============================================================================
 
-#set -e
+set -e
 
-# --- Default Variables ---
-EMU68_RELEASE_URL="https://github.com/michalsc/Emu68/releases/latest/download/Emu68-pistorm32lite.zip"
-HST_IMAGER_REPO="henrikstengaard/hst-imager"
-TMP_DIR="/tmp/pistorm_setup"
-MOUNT_POINT="/mnt/emu68_boot"
+__DEPENDENCIES__=("wget" "unzip" "sed" "partprobe" "mount" "umount" "curl")
+CLEAN_UP=false
 
-# --- Functions ---
+source main.config
+source functions.sh
 
 usage() {
     echo "Usage: sudo $0 --disk [DEVICE] --kickstart [ROM_PATH] [OPTIONS]"
@@ -25,103 +28,42 @@ usage() {
     echo "Options:"
     echo "  -c, --config      Path to custom config.txt"
     echo "  -l, --cmdline     Path to custom cmdline.txt"
+    echo "  --clean-on-close  Remove downloads and extractions after completion"
     echo "  -h, --help        Display this help message"
     exit 1
 }
 
-log_info() {
-    echo -e "[\e[34mINFO \e[0m] $1"
-}
 
-log_success() {
-    echo -e "[\e[32m OK  \e[0m] $1"
-}
-
-log_error() {
-    echo -e "[\e[31mERROR\e[0m] $1"
-    exit 1
-}
-
-check_dependencies() {
-    local deps=("wget" "unzip" "sed" "partprobe" "mount" "umount" "curl")
-    for cmd in "${deps[@]}"; do
-        if ! command -v "$cmd" &> /dev/null; then
-            log_error "Required command '$cmd' not found. Please install it."
-        fi
-    done
-}
-
-get_hst_imager() {
-    log_info "Detecting architecture and downloading hst-imager..."
-    local arch=$(uname -m)
-    local suffix=""
-
-    case "$arch" in
-        x86_64)  suffix="linux_x64" ;;
-        aarch64) suffix="linux_arm64" ;;
-        armv7l)  suffix="linux_arm" ;;
-        *) log_error "Unsupported architecture: $arch" ;;
-    esac
-
-    # Get the latest download URL for the specific architecture
-    local download_url=$(curl -s https://api.github.com/repos/${HST_IMAGER_REPO}/releases/latest \
-        | grep "browser_download_url" \
-        | grep "$suffix.zip" \
-        | cut -d '"' -f 4)
-
-    if [[ -z "$download_url" ]]; then
-        log_error "Could not find hst-imager binary for $suffix"
-    fi
-
-    wget -q --show-progress "$download_url" -O hst-imager.zip
-    if [[ $? -ne 0 ]]; then
-        log_error "Could not download $download_url"
-    fi
-    unzip -q hst-imager.zip hst.imager
-    chmod +x hst.imager
-    log_success "hst.imager ($suffix) is ready."
-}
-
-# --- Argument Parsing ---
-
+# Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -d|--disk) 
-            DISK_PATH="$2"
-            shift 2 ;;
-        -k|--kickstart) 
-            KICKSTART_PATH=$(readlink -f "$2")
-            shift 2 ;;
-        -c|--config) 
-            CUSTOM_CONFIG=$(readlink -f "$2")
-            shift 2 ;;
-        -l|--cmdline) 
-            CUSTOM_CMDLINE=$(readlink -f "$2")
-            shift 2 ;;
-        -h|--help) 
-            usage ;;
-        *) 
-            shift ;;
+        -d|--disk)          DISK_PATH="$2";                     shift 2 ;;
+        -k|--kickstart)     KICKSTART_PATH=$(readlink -f "$2"); shift 2 ;;
+        -c|--config)        CUSTOM_CONFIG=$(readlink -f "$2");  shift 2 ;;
+        -l|--cmdline)       CUSTOM_CMDLINE=$(readlink -f "$2"); shift 2 ;;
+        --clean-on-close)   CLEAN_UP=true;                      shift ;;
+        -h|--help) usage ;;
+        *) shift ;;
     esac
 done
 
-# Initial Validations
-[[ -z "$DISK_PATH" ]] && usage
-[[ -z "$KICKSTART_PATH" ]] && usage
-[[ ! -f "$KICKSTART_PATH" ]] && log_error "Kickstart file not found."
-[[ $(id -u) -ne 0 ]] && log_error "This script must be run as root (sudo)."
+# Basic Validations
+[[ -z "$DISK_PATH"          ]] && usage
+[[ -z "$KICKSTART_PATH"     ]] && usage
+[[ ! -f "$KICKSTART_PATH"   ]] && log_error "Kickstart file not found."
+[[ $(id -u) -ne 0           ]] && log_error "This script must be run as root (sudo)."
 
+# ensure all needed programs are presents
 check_dependencies
 
 # Workspace preparation
-rm -rf "$TMP_DIR" && mkdir -p "$TMP_DIR/emu68_files"
-cp contribs/ps32lite-stealth-firmware.gz "$TMP_DIR/emu68_files/"
-cp contribs/pfs3aio "$TMP_DIR/"
-cd "$TMP_DIR"
+mkdir -p "$TMP_SETUP_DIR/emu68_files"
+cp contribs/ps32lite-stealth-firmware.gz "$TMP_SETUP_DIR/emu68_files/"
+cp contribs/pfs3aio "$TMP_SETUP_DIR/"
+cd "$TMP_SETUP_DIR"
 
-# Setup hst.imager
+# Download hst imager if not yet done
 get_hst_imager
-HST_BIN="./hst.imager"
 
 # Download Emu68
 log_info "Downloading latest Emu68 release..."
@@ -139,7 +81,7 @@ if [[ ! -f "$OLDPWD/partitions.config" ]]; then
 fi
 sed "s|\[PATH_TO_DISK\]|$DISK_PATH|g" "$OLDPWD/partitions.config" > generated_partitions.config
 
-# Execute hst.imager
+# initialize disc and create Amiga partitions
 log_info "Initializing disk and creating partitions..."
 $HST_BIN script generated_partitions.config > /dev/null
 if [[ $? -ne 0 ]]; then
@@ -147,13 +89,13 @@ if [[ $? -ne 0 ]]; then
 fi
 log_success "Disk partitioned and RDB initialized."
 
-# Prepare emu68
+# Check for custom files for emu68
 log_info "Setting up EMU68 boot partition..."
 [[ -n "$CUSTOM_CONFIG" ]] && cp "$CUSTOM_CONFIG" emu68_files/config.txt
 [[ -n "$CUSTOM_CMDLINE" ]] && cp "$CUSTOM_CMDLINE" emu68_files/cmdline.txt
 cp "$KICKSTART_PATH" emu68_files/kick.rom
 
-# mount freshly created emu68 partition 
+# mount the just created emu68 partition 
 mkdir -p "$MOUNT_POINT"
 partprobe "$DISK_PATH"
 sleep 2 
@@ -167,6 +109,11 @@ sync
 umount "$MOUNT_POINT"
 log_success "Emu68 installation complete."
 
-# Cleanup
-rm -rf "$TMP_DIR"
+
+# Cleanup if needed
+if [ "$CLEAN_UP" = true ]; then
+    log_info "Cleaning up temporary extraction files..."
+    rm -rf "$TMP_SETUP_DIR"
+fi
+
 log_info "Process finished successfully."

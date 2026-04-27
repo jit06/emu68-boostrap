@@ -1,106 +1,63 @@
 #!/bin/bash
 
 # ==============================================================================
-# Script Name: generate_packages.sh
-# Description: Generate .desc package files from ADF/LHA/ZIP with hardcoded
-#              logic for AmigaOS 3.2 and generic Aminet-style archives.
+# Package description generator
+# The main purpose is create ".desc" files used by deploy_package.sh 
+# This script support zip, adf and lha files
+# 
+# The script has a dedicated logic to make proper AmigaOS 3.2 ".desc" files in
+# order to generate a working OS like the original install script would have done
+#
+# For any other file, the generator tries to respect Amiga standards like copying
+# ".library" file to SYS:Libs, ".device" to SYS:Devs, etc.
+# Most of the time generic ".desc" files must be manualy adjusted
 # ==============================================================================
 
-#set -e
+set -e
 
-# --- Functions ---
+__DEPENDENCIES__=("wget" "unzip" "lha" "unadf" "readlink")
+CLEAN_UP=false
+
+source main.config
+source functions.sh
+
 
 usage() {
     echo "Usage: $0 --package-list [FILE] --packages-path [DIR]"
     echo ""
     echo "Required:"
     echo "  -l, --package-list   Path to the file listing packages and sources"
-    echo "  -p, --packages-path  Directory where .desc files will be created"
+    echo "  -p, --packages-path  Directory where .desc files should be created"
+    echo "Options:"
+    echo "  --clean-on-close  Remove downloads and extractions after completion"
     exit 1
 }
 
-log_info() { echo -e "[\e[34mINFO \e[0m] $1"; }
-log_success() { echo -e "[\e[32m OK  \e[0m] $1"; }
-log_error() { echo -e "[\e[31mERROR\e[0m] $1"; exit 1; }
 
-check_dependencies() {
-    local deps=("wget" "unzip" "lha" "unadf" "readlink")
-    for cmd in "${deps[@]}"; do
-        if ! command -v "$cmd" &> /dev/null; then
-            log_error "Required command '$cmd' not found. Please install it."
-        fi
-    done
-}
-
-# --- Destination Mapping Logic ---
-
-get_generic_destination() {
-    local src_path="$1"
-    local pkg_name="$2"
-    local dest_base=""
-    local relative_path=""
-
-    # 1. Special Case: Catalogs (must go to Locale/Catalogs/)
-    if [[ "$src_path" =~ (.*)/Catalogs/(.*) ]]; then
-        relative_path="${BASH_REMATCH[2]}"
-        echo "Workbench:Locale/Catalogs/${relative_path}"
-
-    # 2. Standard System Directories (C, S, L, Libs, etc.)
-    elif [[ "$src_path" =~ (.*)/(c|C|s|S|l|L|LIBS|Libs|libs|Classes|Fonts|Locale|Docs|Storage)/(.*) ]]; then
-        dest_base="${BASH_REMATCH[2]}"
-        relative_path="${BASH_REMATCH[3]}"
-        echo "Workbench:${dest_base}/${relative_path}"
-        
-    # 3. Devs and Prefs (including Preferences redirection)
-    elif [[ "$src_path" =~ (.*)/(DEVS|Devs|devs|Prefs|Preferences)/(.*) ]]; then
-        dest_base="${BASH_REMATCH[2]}"
-        [[ "$dest_base" == "Preferences" ]] && dest_base="Prefs"
-        relative_path="${BASH_REMATCH[3]}"
-        echo "Workbench:${dest_base}/${relative_path}"
-
-    # 4. Fallback by File Extension
-    elif [[ "$src_path" == *.library ]]; then
-        echo "Workbench:Libs/$(basename "$src_path")"
-    elif [[ "$src_path" == *.device ]]; then
-        echo "Workbench:Devs/$(basename "$src_path")"
-    elif [[ "$src_path" == *.guide* ]]; then
-        echo "Workbench:Docs/$(basename "$src_path")"
-    elif [[ "$src_path" == *.doc* ]]; then
-        echo "Workbench:Docs/$(basename "$src_path")"
-    elif [[ "$src_path" == *handler* ]]; then
-        echo "Workbench:L/$(basename "$src_path")"
-
-    # 5. Default: Apps/<PackageName>/...
-    else
-        echo "Apps:${src_path}"
-    fi
-}
-
-# --- Argument Parsing ---
-
+# Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -l|--package-list) LIST_PATH=$(readlink -f "$2"); shift 2 ;;
-        -p|--packages-path) PKG_DEST_DIR=$(readlink -f "$2"); shift 2 ;;
+        -l|--package-list)  LIST_PATH=$(readlink -f "$2");      shift 2 ;;
+        -p|--packages-path) PKG_DEST_DIR=$(readlink -f "$2");   shift 2 ;;
         -h|--help) usage ;;
         *) shift ;;
     esac
 done
 
+# Basic Validations
 [[ -z "$LIST_PATH" || -z "$PKG_DEST_DIR" ]] && usage
+
+# ensure all needed programs are presents
 check_dependencies
+
+# Workspace preparation
 mkdir -p "$PKG_DEST_DIR"
-
-
-
-# --- Main Logic ---
-
-TMP_WORK="/tmp/amiga_pkg_gen"
-rm -rf "$TMP_WORK" && mkdir -p "$TMP_WORK"
+mkdir -p "$TMP_DOWNLOAD_DIR"
 
 while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
     [[ -z "$pkg_name" || "$pkg_name" =~ ^# ]] && continue
 
+    # init .desc file
     log_info "Processing: $pkg_name..."
     DESC_FILE="$PKG_DEST_DIR/${pkg_name}.desc"
     > "$DESC_FILE"
@@ -108,17 +65,20 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
     # Download if necessary
     local_file=""
     if [[ "$pkg_source" =~ ^http ]]; then
-        local_file="$TMP_WORK/$(basename "$pkg_source")"
-        wget -q "$pkg_source" -O "$local_file"
-        if [[ $? -ne 0 ]]; then
-            log_error "Could not download $pkg_source"
+        local_file="$TMP_DOWNLOAD_DIR/$(basename "$pkg_source")"
+        
+        if [[ ! -f $local_file ]]
+            log_info "Downloading $pkg_name from $pkg_source..."
+            wget -q "$pkg_source" -O "$local_file"
+            if [[ $? -ne 0 ]]; then
+                log_error "Could not download $pkg_source"
+            fi
         fi
     else
         local_file=$(readlink -f "$pkg_source")
     fi
 
-
-    # Case 1: AmigaOS_ADF (Base OS)
+    # special handling for ADF file in AmigaOS_ADF directory
     if [[ "$pkg_source" =~ "AmigaOS_ADF" ]]; then
         unadf -r "$local_file" | awk '{print $NF}' | while read -r f; do
             # ignore unadf message (some are on stderr, others on stdout...)
@@ -130,32 +90,33 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
             # --- Special logic for backdrops disk : all the content goes to Prefs/Presets
             if [[ "$pkg_name" == *"Backdrops"* ]]; then
                 echo "\"$f\" \"Workbench:Prefs/Presets/Backdrops/$f\"" >> "$DESC_FILE"
-                    continue#src_item=$(echo "$src_raw" | sed 's/^"\(.*\)"$/\1/')
-        #dest_amiga=$(echo "$dest_raw" | sed 's/^"\(.*\)"$/\1/')
+                continue 
+                #src_item=$(echo "$src_raw" | sed 's/^"\(.*\)"$/\1/')
+                #dest_amiga=$(echo "$dest_raw" | sed 's/^"\(.*\)"$/\1/')
             fi
 
-            # --- Special logic for classes : simplify and keep the root directories
+            # classes : simplify and keep the root directories
             if [[ "$pkg_name" == *"Classes"* ]]; then
                 [[ ! "$f" =~ ^(Devs\/|Classes\/)$ ]] && continue 
             fi
 
-            # --- Special logic for DiskDoctor : keep the same file as the official installer
+            # DiskDoctor : keep the same file as the official installer
             if [[ "$pkg_name" == *"DiskDoctor"* ]]; then
                 [[ ! "$f" =~ ^(C\/DAControl|C\/DiskDoctor|Devs\/trackfile.device)$ ]] && continue 
             fi
             
-            # --- Special logic for Extras : simplify and keep the root directories and some icons
+            # Extras : simplify and keep the root directories as well as some icons
             if [[ "$pkg_name" == *"Extras"* ]]; then
                 [[ ! "$f" =~ ^(Prefs\/|System\/|L\/|Tools\/|S/|Prefs.info|System.info|Tools.info)$ ]] && continue 
             fi
 
-            # --- Special logic for Fonts : all files must be copied to Fonts directory
+            # Fonts : all files must be copied to Fonts directory
             if [[ "$pkg_name" == *"Fonts"* ]]; then
                 echo "\"$f\" \"Workbench:Fonts/$f\"" >> "$DESC_FILE"    
                 continue 
             fi
 
-             # --- Special logic for Install disk : just keep needed files 
+             # Install : just keep needed files 
             if [[ "$pkg_name" == *"Install"* ]]; then
                 
                 # get hardrive startup in the right place
@@ -175,7 +136,7 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
                 [[ ! "$f" =~ ^(Prefs\/Env-Archive\/|Libs\/workbench.library)$ ]] && continue
             fi
 
-            # --- Special logic for Locale : only handle countries and fonts
+            # Locale : only handle countries and fonts
             if [[ "$pkg_name" == *"Locale"* ]]; then
                 if [[ "$f" == "Support/Fonts/"?* ]]; then
                     f_dest="${f#Support/}"  
@@ -189,7 +150,7 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
                 continue 
             fi
 
-            # --- Special logic for Storage : mimic install script
+            # Storage : mimic install script
             if [[ "$pkg_name" == *"Storage"* ]]; then
                 if [[ "$f" =~ ^(DOSDrivers\/|Keymaps\/|Monitors\/|Printers\/)$ ]]; then
                     echo "\"$f\" \"Workbench:Storage/$f\"" >> "$DESC_FILE"        
@@ -216,12 +177,12 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
                 [[ ! "$f" =~ ^(WBStartup\/|Classes\/|C\/)$ ]] && continue 
             fi
 
-            # General copy for OS files
+            # default copy in the same folder / destination
             echo "\"$f\" \"Workbench:$f\"" >> "$DESC_FILE"
         done
 
 
-    # Case 2: AmigaOSUpdate_ADF
+    # # special handling for ADF file in AmigaOSUpdate_ADF directory
     elif [[ "$pkg_source" =~ "AmigaOSUpdate_ADF" ]]; then
         unadf -r "$local_file" | awk '{print $NF}' | while read -r f; do
             # ignore unadf message (some are on stderr, others on stdout...)
@@ -230,7 +191,7 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
             # ignore non path related info
             [[ "$f" == "" || "$f" == "/" || "$f" == "1" || "$f" =~ "%" || "$f" =~ "Disk.info" || "$f" =~ (\/)$ ]] && continue
 
-            # --- Special logic for Update disk
+            # Update disk has some file to ignore
             if [[ "$pkg_name" == *"Update"* ]]; then
                 
                 # ignore install process related files
@@ -239,7 +200,7 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
 
             fi
 
-            # --- Special logic for disk doctor : only a few files are kept
+            # DiskDoctor : only a few files are kept
             if [[ "$pkg_name" == *"DiskDoctor"* ]]; then
                 
                 # ignore install process related files
@@ -258,7 +219,7 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
 
 
 
-    # Case 3: Others (LHA/ZIP/ADF)
+    # Generic packages (non AmigaOS)
     else
         list_cmd=""
         if [[ "$local_file" == *.lha ]]; then list_cmd="lha lq $local_file | awk '{print \$NF}'"
@@ -282,5 +243,10 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
 
 done < "$LIST_PATH"
 
-rm -rf "$TMP_WORK"
+# Cleanup if needed
+if [ "$CLEAN_UP" = true ]; then
+    log_info "Cleaning up temporary extraction files..."
+    rm -rf "$TMP_DOWNLOAD_DIR"
+fi
+
 log_info "Generation process completed."
