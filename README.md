@@ -24,10 +24,10 @@ sudo ./setup_disk.sh -d /dev/sdc -k A1200.47.115.rom
 ```
 
 ### 2. Deploy Amiga OS
-Install AmigaOS 3.2 using a package list. In this example, we map the Amiga volume label "Workbench" to the physical device name "SDH0" defined in the RDB.
+Install AmigaOS 3.2 and some system addons. In this example, we map the Amiga volume label "Workbench" to the physical device name "SDH0" defined in the RDB.
 Off course you have to provide your own ADF files of Amiga OS 3.2 and updates that must be copie respectively in `AmigaOS_ADF` and `AmigaOSUpdate_ADF` directories
 ```bash
-sudo ./deploy_package.sh -d /dev/sdc -l packages-OS32.list -p packages-OS32 -m SDH0=Workbench
+sudo ./package.sh -d /dev/sdc -m SDH0=Workbench -i OS32,addons
 ```
 
 ## Full documentation
@@ -73,29 +73,41 @@ This script handles the high-speed deployment of software to the Amiga partition
 * **Bulk Transfer**: Uses **hst.imager** to copy entire directories to the RDB partitions in seconds rather than minutes.
 
 #### Layered Package System
-The deployment follows a **top-down priority** based on your package list. Software is installed in the exact order specified in the `.list` file, overwriting any existing files in the staging area.
+The deployment follows a **top-down priority** based on your package list. Software are installed in the exact order specified in the `.list` file, overwriting any existing files in the staging area.
 
-* **Customizable Installation**: You can easily add, remove, or reorder software.
-* **Overwriting Mechanism**: This is used for advanced customization. For example, the **AmigaOS 3.2 GlowIcons** package can be placed at the end of the list to replace all standard 4-color icons. To keep the classic look, simply remove that line in your list.
-* **Pre-configured Packages**: Several ready-to-use packages are included:
-    * **AmigaOS 3.2** & **Update 3.2.3**
-    * **Emu68-tools** (specific for PiStorm users)
-    * **SysInfo**, **KingCON**, and many more.
+**Standardized Repository**: By default, the script looks into `packages` directory where `.list` files and their associated `.desc` folders (of the same name) are stored.
+* **Multi-Package Installation**: You can chain multiple package sets (e.g., `OS32,Addons`) in a single command. They will be processed in the order provided.
+* **Customizable & Layered**: You can easily add or reorder software. For example, installing a "GlowIcons" package after the main OS will automatically overwrite the standard icons in the staging area.
+* **Pre-configured Packages**: Several ready-to-use sets are available in the `packages` folder:
+    * **OS32**: AmigaOS 3.2 & Update 3.2.3.
+    * **Emu68-tools**: Specific utilities for PiStorm users.
+    * **Addons**: SysInfo, KingCON, and other essential tools.
 
-#### Arguments & Options
+### Arguments & Options
 
 | Argument | Long Format | Description |
 | :--- | :--- | :--- |
-| `-l` | `--package-list` | **Required**. Path to the file listing packages to install. |
-| `-p` | `--packages-path`| **Required**. Directory containing the `.desc` files for each package. |
+| **`-i`** | **`--install`** | **Required (or -l/-p)**. Names of packages to install (e.g., `OS32,Addons`). Matches `.list` files and directories in the `packages/` folder. |
+| `-l` | `--package-list` | **Manual Mode**. Path to a specific `.list` file. |
+| `-p` | `--packages-path`| **Manual Mode**. Directory containing the associated `.desc` files. |
 | `-d` | `--disk` | **Required**. Path to the physical disk (e.g., `/dev/sdc`). |
 | `-m` | `--mapping` | Map an RDB Device to a Volume Name (e.g., `-m SDH0=Workbench`). Can be used multiple times. |
 | | `--clean-on-close` | Removes downloads and extraction folders after completion. |
 | `-h` | `--help` | Displays the help message. |
 
+> **Warning**: The `--install` argument is mutually exclusive with `--package-list` and `--packages-path`.
+
+
+
 #### Usage Example
+**Standard Usage (Automated):**
+Install the OS 3.2 base followed by the Addons pack using the standardized repository:
 ```bash
-sudo ./deploy_package.sh -d /dev/sdc -l packages-OS32.list -p packages-OS32 -m SDH0=Workbench --clean-on-close
+sudo ./deploy_package.sh -d /dev/sdc --install OS32,Addons -m SDH0=Workbench
+```
+**Custom package file (Manual):**
+```bash
+sudo ./deploy_package.sh -d /dev/sdc -l my-own-packages.list -p my-own-packages-folder -m SDH0=Workbench 
 ```
 
 ### Generate packages description files with `generate_package_desc.sh`
