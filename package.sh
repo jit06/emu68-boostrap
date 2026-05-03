@@ -132,7 +132,7 @@ for task in "${TASKS[@]}"; do
         archive="${PKG_SOURCES[$pkg_name]}"
         desc_file="${current_desc_dir}/${pkg_name}.desc"
         extract_path="${TMP_EXTRACT_DIR}/${pkg_name}"
-        
+
         log_info "Staging package: $pkg_name"
         mkdir -p "$extract_path"
 
@@ -143,9 +143,14 @@ for task in "${TASKS[@]}"; do
         esac
 
         # Build local tree ensuring good encoding convertion 
-        iconv -f UTF-8 -t ISO-8859-1 "$desc_file" | while IFS=$'\t ' read -r src_raw dest_raw || [[ -n "$src_raw" ]]; do
-            [[ -z "$src_raw" || "$src_raw" =~ ^# ]] && continue
-            
+        iconv -f UTF-8 -t ISO-8859-1 "$desc_file" | while read -r line || [[ -n "$line" ]]; do
+            [[ -z "$line" || "$line" =~ ^# ]] && continue
+
+            # Use xargs to properly parse quoted strings with spaces
+            eval set -- "$line"
+            src_raw="$1"
+            dest_raw="$2"
+
             # remove quotes and trailing slashes if any
             src_item=$(echo "$src_raw" | sed 's/^"\(.*\)"$/\1/; s/\/$//')
             dest_amiga=$(echo "$dest_raw" | sed 's/^"\(.*\)"$/\1/; s/\/$//')
