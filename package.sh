@@ -178,6 +178,28 @@ for task in "${TASKS[@]}"; do
             fi
 
         done < "$desc_file"
+
+        # handle ".user-startup" files
+        user_startup_src="${desc_file%.desc}.user-startup"
+        if [[ -f "$user_startup_src" ]]; then
+            # search for s/user-startup file
+            target_startup=$(find "$STAGING_ROOT" -ipath "*/s/user-startup" | head -n 1)
+            
+            if [[ -n "$target_startup" ]]; then
+                if ! grep -q ";BEGIN ${pkg_name}" "$target_startup"; then
+                    log_info "Injecting user-startup for: $pkg_name"
+                    {
+                        echo ";BEGIN ${pkg_name}"
+                        cat "$user_startup_src"
+                        echo ";END ${pkg_name}"
+                        echo ""
+                    } >> "$target_startup"
+                fi
+            else
+                log_warn "User-startup file not found in staging. Skipping injection for $pkg_name."
+            fi
+        fi
+
     done < "$current_list"
 done
 
