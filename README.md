@@ -1,5 +1,7 @@
 # Emu68-boostrap : Easy Amiga disk creation for emu68 
 
+[![Logo](logo.png)]()
+
 This toolchain provides a headless, Linux-native alternative to **emu68-imager**. It is designed for users who need a powerful, scriptable way to prepare SD cards or disk images for Amiga systems (including Emu68/PiStorm) without a graphical interface.
 
 Everything is customizable:
@@ -61,7 +63,7 @@ This script is responsible for the low-level preparation of the storage medium. 
 sudo ./setup_disk.sh -d /dev/sdc -k ./roms/kick32.rom --clean-on-close
 ```
 
-### Install Amiga software with `deploy_package.sh`
+### Install Amiga software with `package.sh`
 
 This script handles the high-speed deployment of software to the Amiga partitions. Instead of copying files one by one (which is extremely slow on RDB structures), it reconstructs the entire file tree in a local **staging area** on Linux before performing a bulk transfer to the disk.
 
@@ -80,8 +82,10 @@ The deployment follows a **top-down priority** based on your package list. Softw
 * **Customizable & Layered**: You can easily add or reorder software. For example, installing a "GlowIcons" package after the main OS will automatically overwrite the standard icons in the staging area.
 * **Pre-configured Packages**: Several ready-to-use sets are available in the `packages` folder:
     * **OS32**: AmigaOS 3.2 & Update 3.2.3.
-    * **Emu68-tools**: Specific utilities for PiStorm users.
-    * **Addons**: SysInfo, KingCON, and other essential tools.
+    * **emu68tools**: Specific utilities for PiStorm users.
+    * **addons**: SysInfo, KingCON, and other essential tools.
+
+> **Note**: any `.user-startup` file will be injected in system partition `S/User-startup` and will automatically be surounded `;BEGIN <package name>` and `;END <package name>`
 
 ### Arguments & Options
 
@@ -97,20 +101,18 @@ The deployment follows a **top-down priority** based on your package list. Softw
 
 > **Warning**: The `--install` argument is mutually exclusive with `--package-list` and `--packages-path`.
 
-
-
 #### Usage Example
 **Standard Usage (Automated):**
 Install the OS 3.2 base followed by the Addons pack using the standardized repository:
 ```bash
-sudo ./deploy_package.sh -d /dev/sdc --install OS32,Addons -m SDH0=Workbench
+sudo ./package.sh -d /dev/sdc --install OS32,Addons -m SDH0=Workbench
 ```
 **Custom package file (Manual):**
 ```bash
-sudo ./deploy_package.sh -d /dev/sdc -l my-own-packages.list -p my-own-packages-folder -m SDH0=Workbench 
+sudo ./package.sh -d /dev/sdc -l my-own-packages.list -p my-own-packages-folder -m SDH0=Workbench 
 ```
 
-### Generate packages description files with `generate_package_desc.sh`
+### Generate packages description files with `generate_package.sh`
 
 This script is the companion tool for creating the `.desc` files required by the deployment process. It automates the indexing of archives and attempts to intelligently map where files should be installed on the Amiga partitions. This provides with a simple yyet efficient way to build and share reproductable installations without sharing a heavy binary image.
 
