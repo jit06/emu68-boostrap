@@ -15,6 +15,7 @@ declare -A RDB_MAP
 log_info() { echo -e "[\e[34mINFO \e[0m] $1"; }
 log_success() { echo -e "[\e[32m OK  \e[0m] $1"; }
 log_error() { echo -e "[\e[31mERROR\e[0m] $1"; exit 1; }
+log_warn() { echo -e "[\e[33mWARN \e[0m] $1"; }
 
 
 # check dependencies based on a special variable.
