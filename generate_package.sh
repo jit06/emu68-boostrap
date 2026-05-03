@@ -67,7 +67,7 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
     if [[ "$pkg_source" =~ ^http ]]; then
         local_file="$TMP_DOWNLOAD_DIR/$(basename "$pkg_source")"
         
-        if [[ ! -f $local_file ]]
+        if [[ ! -f $local_file ]] ; then
             log_info "Downloading $pkg_name from $pkg_source..."
             wget -q "$pkg_source" -O "$local_file"
             if [[ $? -ne 0 ]]; then
