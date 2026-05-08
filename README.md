@@ -32,6 +32,26 @@ Off course you have to provide your own ADF files of Amiga OS 3.2 and updates th
 sudo ./package.sh -d /dev/sdc -m SDH0=Workbench -i OS32,addons
 ```
 
+## Repository Structure
+| Path                  | git ignore    | usage                                                 |
+| :---                  | :---          | :---                                                  |
+| .continue             | no            | configuration files for AI coding help                |  
+| AmigaOS_ADF           | yes           | Amiga OS ADF files must be copied here                |
+| AmigaOSUpdate_ADF     | yes           | Amiga OS Update ADF files must be copied here         |
+| contribs              | no            | contains distribuable binaries used by the toolchain  |
+| custom                | yes           | should contains any non free softwares                |
+| packages              | no            | contains packages list and description for install    |
+| function.sh           | no            | kind of framework used by all the scripts             |
+| generate_package.sh   | no            | see below : tries to generate package description     |
+| LICENCE               | no            | read it :)                                            |
+| logo.png              | no            | thank you chatGPT                                     |
+| main.config           | no            | global parameters common to all scripts               |
+| package.sh            | no            | see below : install packages on amiga partitions      |
+| partitions.config     | no            | example of partition scheme used by setup_disk.sh     |
+| README.md             | no            | you're reading it                                     |
+| setup_disk.sh         | no            | see below : initialize disk for PiStorm               |
+
+
 ## Full documentation
 
 ### Initialize disk and Amiga partitions with `setup_disk.sh`
