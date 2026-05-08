@@ -1,4 +1,3 @@
 "PowerPacker.library" "Workbench:Libs/PowerPacker.library"
-"PPlib020.readme" "Apps:PPlib020.readme"
-"PPLoadSeg020" "Apps:PPLoadSeg020"
+"PPLoadSeg020" "Workbench:C/PPLoadSeg020"
 "PPLoadSeg020.doc" "Workbench:Docs/PPLoadSeg020.doc"

@@ -1,0 +1,4 @@
+Assign CON: DISMOUNT
+Assign RAW: DISMOUNT
+Mount CON: from DEVS:KingCON-mountlist
+Mount RAW: from DEVS:KingCON-mountlist

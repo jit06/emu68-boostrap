@@ -144,7 +144,7 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
                     echo "\"$f\" \"Workbench:$f_dest\"" >> "$DESC_FILE"        
                     continue
                 elif [[ "$f" == "Countries/" ]]; then
-                    echo "\"$f\" \"Workbench:Locale/\"" >> "$DESC_FILE"
+                    echo "\"$f\" \"Workbench:Locale/Countries/\"" >> "$DESC_FILE"
                     continue
                 fi
                 continue 

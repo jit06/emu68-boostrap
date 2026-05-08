@@ -137,7 +137,7 @@ for task in "${TASKS[@]}"; do
         mkdir -p "$extract_path"
 
         case "${archive,,}" in
-            *.lha) lha xqW="$extract_path" "$archive" > /dev/null ;;
+            *.lha) lha xqw="$extract_path" "$archive" &> /dev/null ;;
             *.zip) unzip -q -o "$archive" -d "$extract_path" ;;
             *.adf) cd "$extract_path" && unadf -w "$archive" &> /dev/null && cd - > /dev/null ;;
         esac
@@ -165,8 +165,16 @@ for task in "${TASKS[@]}"; do
                 mkdir -p "${local_vol_stage}/$(dirname "$sub_path")"
             fi
             
-             real_src="${extract_path}/${src_item}"
-        
+            # check if the final destination exists regardless of the letter case
+            existing_path=$(find "$local_vol_stage" -ipath "${local_vol_stage}/${sub_path}" -print -quit)
+            if [[ -n "$existing_path" ]]; then
+                final_sub_path="${existing_path#$local_vol_stage/}"
+            else
+                final_sub_path="$sub_path"
+            fi
+
+            real_src="${extract_path}/${src_item}"
+
             # Handle .z decompression
             if [[ "$src_item" =~ \.[zZ]$ && -f "$real_src" ]]; then
                 gunzip -c "$real_src" > "${real_src%.*}" && real_src="${real_src%.*}"
@@ -175,11 +183,11 @@ for task in "${TASKS[@]}"; do
             # if we are about to copy a directory, remove its name from destination not to create "directory in directory"
             if [[ -e "$real_src" ]]; then
                 if [[ -d "$real_src" ]] ; then
-                    sub_path="$(dirname "$sub_path")"
+                    final_sub_path="$(dirname "$final_sub_path")"
                 fi
                 
                 # Do the actual copy to local staging
-                cp -rf "$real_src" "${local_vol_stage}/${sub_path}"
+                cp -rf "$real_src" "${local_vol_stage}/${final_sub_path}"
             fi
 
         done < "$desc_file"
@@ -196,6 +204,7 @@ for task in "${TASKS[@]}"; do
                     {
                         echo ";BEGIN ${pkg_name}"
                         cat "$user_startup_src"
+                        echo ""
                         echo ";END ${pkg_name}"
                         echo ""
                     } >> "$target_startup"

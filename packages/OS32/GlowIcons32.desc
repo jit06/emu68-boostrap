@@ -64,6 +64,7 @@
 "Prefs/Env-Archive/Sys/def_script.info" "Workbench:Prefs/Env-Archive/Sys/def_script.info"
 "Prefs/Env-Archive/Sys/def_c.info" "Workbench:Prefs/Env-Archive/Sys/def_c.info"
 "Prefs/Env-Archive/Sys/def_harddisk.info" "Workbench:Prefs/Env-Archive/Sys/def_harddisk.info"
+"Prefs/Env-Archive/Sys/def_harddisk.info" "Workbench:disk.info"
 "Prefs/Env-Archive/Sys/def_sys.info" "Workbench:Prefs/Env-Archive/Sys/def_sys.info"
 "Prefs/Env-Archive/Sys/def_work.info" "Workbench:Prefs/Env-Archive/Sys/def_work.info"
 "Prefs/Env-Archive/Sys/Workbench.prefs" "Workbench:Prefs/Env-Archive/Sys/Workbench.prefs"
