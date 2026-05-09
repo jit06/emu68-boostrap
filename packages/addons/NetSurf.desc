@@ -1,7 +1,6 @@
 "NetSurf/Env/OPENSSL_CONF" "Workbench:Prefs/Env-Archive/OPENSSL_CONF"
 "NetSurf/Env/WallGet/" "Workbench:Prefs/Env-Archive/WallGet/"
 "NetSurf/C/" "Workbench:Network/NetSurf/C/"
-"NetSurf/Icons/64x64_Icons/Netsurf_Drawer.info" "Workbench:Network/NetSurf.info"
 "NetSurf/Downloads/" "Workbench:Network/NetSurf/Downloads/"
 "NetSurf/Downloads.info" "Workbench:Network/NetSurf/Downloads.info"
 "NetSurf/Fonts/" "Workbench:Network/NetSurf/Fonts/"
