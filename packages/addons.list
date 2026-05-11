@@ -16,7 +16,7 @@ MUI5                https://github.com/amiga-mui/muidev/releases/download/MUI-5.
 MUI5-Contrib        https://github.com/amiga-mui/muidev/releases/download/MUI-5.0-20210831/MUI-5.0-20210831-os3-contrib.lha
 Filesysbox          https://aminet.net/util/libs/filesysbox.m68k-amigaos.lha
 iconlib             https://aminet.net/util/libs/IconLib_46.4.lha
-Snoopdos            https://aminet.net/util/moni/SnoopDos.lha
+#Snoopdos            https://aminet.net/util/moni/SnoopDos.lha
 UHCTools            https://uhc.megaburken.net/uhctools_os3.lha
 unzip               https://aminet.net/util/arc/unzip610.lha
 Xadmaster           https://aminet.net/util/arc/xadmaster020.lha
@@ -29,4 +29,7 @@ NetSurf             http://netsurf.baderman.net/NetSurf-m68k-3.11.lha
 smb2fs              https://aminet.net/disk/misc/smb2fs.m68k-amigaos.lha
 fat95               https://aminet.net/disk/misc/fat95.v3.21.lha
 Avalanche           https://aminet.net/util/arc/avalanche.lha
+ViNCEd          https://aminet.net/util/shell/ViNCEd.lha
+ViNCEdThemes    https://aminet.net/util/shell/ViNCEdThemes.lha
+ViNCEdBoot      https://aminet.net/util/shell/ViNCEd_Boot_Shin.lha
 StandardGlowIcons   https://aminet.net/pix/gicon/StandardGlowIcons.lha
