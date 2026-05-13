@@ -26,10 +26,10 @@ sudo ./setup_disk.sh -d /dev/sdc -k A1200.47.115.rom
 ```
 
 ### 2. Deploy Amiga OS
-Install AmigaOS 3.2 and some system addons. In this example, we map the Amiga volume label "Workbench" to the physical device name "SDH0" defined in the RDB.
+Install AmigaOS 3.2, emu68 tools and some system addons. In this example, we map the Amiga volume label "Workbench" to the physical device name "SDH0" defined in the RDB.
 Off course you have to provide your own ADF files of Amiga OS 3.2 and updates that must be copie respectively in `AmigaOS_ADF` and `AmigaOSUpdate_ADF` directories
 ```bash
-sudo ./package.sh -d /dev/sdc -m SDH0=Workbench -i OS32,addons
+sudo ./package.sh -d /dev/sdc -m SDH0=Workbench -i OS32,emu68tools,picasso96,addons
 ```
 
 ## Repository Structure
