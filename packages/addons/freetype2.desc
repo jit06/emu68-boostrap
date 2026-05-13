@@ -1,0 +1,4 @@
+"freetype2/Libs/freetype2.library" "Workbench:Libs/freetype2.library"
+"freetype2/System/FTManager" "Workbench:System/FTManager"
+"freetype2/System/FTManager.info" "Workbench:System/FTManager.info"
+"freetype2/Fonts/" "Workbench:Fonts/"
