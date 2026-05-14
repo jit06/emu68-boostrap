@@ -5,3 +5,5 @@
 "StandardGlowIcons/Preferences/2/Sound.info" "Workbench:Prefs/14Bit_Calibration.info"
 "StandardGlowIcons/Preferences/3/MUI-Prefs.info" "Workbench:Prefs/MUI.info"
 "StandardGlowIcons/Applications/S/ShowMem.info" "Workbench:System/SysInfo.info"
+"StandardGlowIcons/Applications/Y/YAM.info" "Workbench:Network/Yam/YAM.info"
+"StandardGlowIcons/Drawers/Y/YAM.info" "Workbench:Network/Yam.info"
