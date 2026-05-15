@@ -67,6 +67,16 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
     if [[ "$pkg_source" =~ ^http ]]; then
         local_file="$TMP_DOWNLOAD_DIR/$(basename "$pkg_source")"
         
+        # Handle "!" at the end of the URL to specify searching for an ADF content inside the archive
+        use_archive_content=false
+        if [[ "$pkg_source" =~ "!" ]]; then
+            use_archive_content=true
+            # Clean url for download
+            pkg_source="${pkg_source%?}"
+            # Update local_file to match the original filename in the download directory
+            local_file="$TMP_DOWNLOAD_DIR/$(basename "$pkg_source")"
+        fi
+
         if [[ ! -f $local_file ]] ; then
             log_info "Downloading $pkg_name from $pkg_source..."
             wget -q "$pkg_source" -O "$local_file"
@@ -74,8 +84,20 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
                 log_error "Could not download $pkg_source"
             fi
         fi
+
+        if [[ "$use_archive_content" == true ]]; then
+            log_info "Treating content of archive as source, searching for ADF file to extract..."
+            local_file=$(extract_adf_from_archive "${local_file}")
+        fi
     else
         local_file=$(readlink -f "$pkg_source")
+        # If the local path ends with '!', assume we want the archive's ADF content.
+        use_archive_content=false
+        if [[ "$pkg_source" =~ "!" ]]; then
+            use_archive_content=true
+            # Clean the source path for readlink and other ops
+            local_file=$(readlink -f "${pkg_source%?}")
+        fi
     fi
 
     # special handling for ADF file in AmigaOS_ADF directory
@@ -217,23 +239,24 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
             fi
         done
 
-
-
     # Generic packages (non AmigaOS)
     else
-        list_cmd=""
-        if [[ "$local_file" == *.lha ]]; then list_cmd="lha lq $local_file | awk '{print \$NF}'"
-        elif [[ "$local_file" == *.zip ]]; then list_cmd="unzip -Z1 $local_file"
-        elif [[ "$local_file" == *.adf ]]; then list_cmd="unadf $local_file -l | awk '{print \$NF}'"
+        if [[ "$local_file" == *.lha ]];    then process_listing() { lha lq "$local_file" | awk '{print $NF}'; }
+        elif [[ "$local_file" == *.zip ]];  then process_listing() { unzip -Z1 "$local_file"; }
+        elif [[ "$local_file" == *.adf ]];  then process_listing() { unadf -r "$local_file" | awk '{print $NF}'; } 
         fi
 
-        # echo "CMD = $list_cmd"
-
-        eval "$list_cmd" | while read -r src_item; do
+        process_listing | while read -r src_item; do
             # Clean string and skip directories
             src_item=$(echo "$src_item" | tr -d '\r')
             [[ -z "$src_item" || "$src_item" == */ ]] && continue
-          
+
+            # Skip unadf headers if they appear in stdout
+            [[ "$src_item" == "Warning"* || "$src_item" == "Device"* || "$src_item" == "Volume"* ]] && continue
+
+            # ignore non path related info
+            [[ "$src_item" == "" || "$src_item" == "/" || "$src_item" == "1" || "$src_item" =~ "%" || "$src_item" =~ "Disk.info" ]] && continue
+
             dest_item=$(get_generic_destination "$src_item" "$pkg_name")
             echo "\"$src_item\" \"$dest_item\"" >> "$DESC_FILE"
         done

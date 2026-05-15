@@ -193,3 +193,28 @@ get_rdb_path() {
     # Return hst.imager format: [DISK]/mbr/2/rdb/[IDX]/[PATH]
     echo "${disk}/mbr/2/rdb/${part_idx}/${sub_path}"
 }
+
+extract_adf_from_archive() {
+    local archive_path="$1"
+    
+    adf_in_archive=""
+    # Search using lha or unzip depending on original extension
+    if [[ "$archive_path" == *.lha ]]; then
+        adf_in_archive=$(lha lq "$archive_path" | grep -i "\.adf$" | head -n 1)
+        extract_cmd="lha xqw=\"$TMP_DOWNLOAD_DIR\" \"$archive_path\" &> /dev/null ;;"
+    elif [[ "$archive_path" == *.zip ]]; then
+        adf_in_archive=$(unzip -Z1 "$archive_path" | grep -i "\.adf$" | head -n 1)
+        extract_cmd="unzip -q -o \"$archive_path\" -d \"$TMP_DOWNLOAD_DIR\""
+    fi
+
+    if [[ -n "$adf_in_archive" ]]; then
+        if [[ ! -f "$TMP_DOWNLOAD_DIR/$adf_in_archive" ]]; then
+            eval "$extract_cmd"
+        fi
+
+        # return the path to the extracted ADF file 
+        echo "$TMP_DOWNLOAD_DIR/$adf_in_archive"
+    else
+        log_error "No ADF file found inside archive: $archive_path"
+    fi
+}
