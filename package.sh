@@ -113,6 +113,7 @@ for task in "${TASKS[@]}"; do
                 wget -q --show-progress "$pkg_source" -O "$local_archive"
             fi
 
+            # handle the case where ADF is in archive
             if [[ "$use_archive_content" == true ]]; then
                 log_info "Treating content of archive as source, searching for ADF file to extract..."
                 local_archive=$(extract_adf_from_archive "${local_archive}")
