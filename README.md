@@ -172,6 +172,7 @@ The package list defines **what** to install. It is a simple space-separated or 
 * **PackageName**: The name of the package. It must match a corresponding `.desc` file in your descriptions directory.
 * **SourcePathOrUrl**: Can be a local path to an archive (`.lha`, `.zip`, `.adf`) or a direct `http/https` URL.
 * Lines starting with `#` are ignored.
+* If a source path url ends with "!", the first encoutered ADF file inside the archive will be used instead of the archive itself
 
 **Example:**
 Local files in ADF format for Amiga OS 3.2
