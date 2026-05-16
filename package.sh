@@ -98,12 +98,26 @@ for task in "${TASKS[@]}"; do
         desc_file="${current_desc_dir}/${pkg_name}.desc"
         [[ ! -f "$desc_file" ]] && log_error "Description file not found: $desc_file"
 
+        # Handle "!" at the end of the URL to specify searching for an ADF content inside the archive
+        use_archive_content=false
+        if [[ "$pkg_source" =~ "!" ]]; then
+            use_archive_content=true
+            # Clean url for download
+            pkg_source="${pkg_source%?}"
+        fi
+
         if [[ "$pkg_source" =~ ^http ]]; then
             local_archive="${TMP_DOWNLOAD_DIR}/$(basename "$pkg_source")"
             if [[ ! -f "$local_archive" ]]; then
                 log_info "Downloading $pkg_name from $pkg_source..."
                 wget -q --show-progress "$pkg_source" -O "$local_archive"
             fi
+
+            if [[ "$use_archive_content" == true ]]; then
+                log_info "Treating content of archive as source, searching for ADF file to extract..."
+                local_archive=$(extract_adf_from_archive "${local_archive}")
+            fi
+
             PKG_SOURCES["$pkg_name"]="$local_archive"
         else
             abs_source=$(readlink -f "$pkg_source")
@@ -217,6 +231,7 @@ for task in "${TASKS[@]}"; do
     done < "$current_list"
 done
 
+exit 0
 
 # Use hst.imager to copy the staging directory of each volume to the corresponding Amiga partition
 log_info "Performing bulk transfer to disk..."
