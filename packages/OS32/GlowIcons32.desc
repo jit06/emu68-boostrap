@@ -47,6 +47,9 @@
 "Prefs/Env-Archive/Sys/def_drawer.info" "Workbench:Network/MiamiDX.info"
 "Prefs/Env-Archive/Sys/def_drawer.info" "Workbench:Network/NetSurf.info"
 "Prefs/Env-Archive/Sys/def_drawer.info" "Workbench:Network/iBrowse.info"
+"Prefs/Env-Archive/Sys/def_drawer.info" "Workbench:Network/Yam.info"
+"Prefs/Env-Archive/Sys/def_drawer.info" "Workbench:Tools/IconMixer.info"
+"Prefs/Env-Archive/Sys/def_drawer.info" "Workbench:System/WBDock.info"
 "Prefs/Env-Archive/Sys/def_drawer.info" "Workbench:Docs.info"
 "Prefs/Env-Archive/Sys/def_drawer.info" "Workbench:System/MUI.info"
 "Prefs/Env-Archive/Sys/def_iff.info" "Workbench:Prefs/Env-Archive/Sys/def_iff.info"
@@ -61,7 +64,7 @@
 "Prefs/Env-Archive/Sys/def_kickstart.info" "Workbench:Prefs/Env-Archive/Sys/def_kickstart.info"
 "Prefs/Env-Archive/Sys/ScreenMode.prefs" "Workbench:Prefs/Env-Archive/Sys/ScreenMode.prefs"
 "Prefs/Env-Archive/Sys/def_ascii.info" "Workbench:Prefs/Env-Archive/Sys/def_ascii.info"
-"Prefs/Env-Archive/Sys/def_music.info" "Workbench:Prefs/Env-Archive/Sys/def_music.info"
+"Prefs/Env-Archive/Sys/def_music.info" "Workbench:Prefs/Env-Archive/Sys/def_music.info"Network/Yam.info
 "Prefs/Env-Archive/Sys/def_key.info" "Workbench:Prefs/Env-Archive/Sys/def_key.info"
 "Prefs/Env-Archive/Sys/def_ram.info" "Workbench:Prefs/Env-Archive/Sys/def_ram.info"
 "Prefs/Env-Archive/Sys/def_picture.info" "Workbench:Prefs/Env-Archive/Sys/def_picture.info"

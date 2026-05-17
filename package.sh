@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # ==============================================================================
 # Package deployment script
@@ -231,8 +231,6 @@ for task in "${TASKS[@]}"; do
 
     done < "$current_list"
 done
-
-exit 0
 
 # Use hst.imager to copy the staging directory of each volume to the corresponding Amiga partition
 log_info "Performing bulk transfer to disk..."

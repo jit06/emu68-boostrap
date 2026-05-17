@@ -6,4 +6,5 @@
 "StandardGlowIcons/Preferences/3/MUI-Prefs.info" "Workbench:Prefs/MUI.info"
 "StandardGlowIcons/Applications/S/ShowMem.info" "Workbench:System/SysInfo.info"
 "StandardGlowIcons/Applications/Y/YAM.info" "Workbench:Network/Yam/YAM.info"
-"StandardGlowIcons/Drawers/Y/YAM.info" "Workbench:Network/Yam.info"
+"StandardGlowIcons/Applications/F/FontTool.info" "Workbench:System/FTManager.info"
+"StandardGlowIcons/Applications/A/AmigaSystem1.info" Workbench:System/AmigaTestKit.info
