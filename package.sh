@@ -110,7 +110,7 @@ for task in "${TASKS[@]}"; do
             local_archive="${TMP_DOWNLOAD_DIR}/$(basename "$pkg_source")"
             if [[ ! -f "$local_archive" ]]; then
                 log_info "Downloading $pkg_name from $pkg_source..."
-                wget -q --show-progress "$pkg_source" -O "$local_archive"
+                wget -t 3 -c -q --show-progress "$pkg_source" -O "$local_archive"
             fi
 
             # handle the case where ADF is in archive
