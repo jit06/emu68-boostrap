@@ -1,2 +1,0 @@
-assign ArtEffect: Apps:ArtEffects
-assign add LIBS: ArtEffects:Libs
