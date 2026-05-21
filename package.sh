@@ -11,7 +11,7 @@
 
 #set -e
 
-__DEPENDENCIES__=("wget" "unzip" "lha" "unadf" "readlink" "curl" "sed" "gunzip")
+__DEPENDENCIES__=("wget" "unzip" "lha" "unadf" "readlink" "curl" "sed" "gunzip", "convmv")
 CLEAN_UP=false
 
 source main.config
@@ -232,6 +232,9 @@ for task in "${TASKS[@]}"; do
     done < "$current_list"
 done
 
+log_info "Fixing filename encodings in staging directory..."
+convmv -f iso-8859-1 -t utf-8 -r --notest "$STAGING_ROOT/" &> /dev/null
+
 # Use hst.imager to copy the staging directory of each volume to the corresponding Amiga partition
 log_info "Performing bulk transfer to disk..."
 
@@ -249,7 +252,7 @@ for vol_dir in "$STAGING_ROOT"/*; do
         log_info "Transferring all files to Volume: $vol_label..."
         
         # copy the content of the staging volume directory (but not the folder itself)
-        $HST_BIN fs copy "$vol_dir/" "$target_rdb_base" --recursive --force --quiet &> /dev/null
+        $HST_BIN fs copy "$vol_dir/" "$target_rdb_base" --recursive --force --quiet  &> /dev/null
 
         if [[ $? != 0 ]]; then
             log_error "An error occured while copying files"
