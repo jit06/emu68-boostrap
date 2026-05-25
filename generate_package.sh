@@ -15,7 +15,7 @@
 
 set -e
 
-__DEPENDENCIES__=("wget" "unzip" "lha" "unadf" "readlink")
+__DEPENDENCIES__=("wget" "unzip" "lha" "unadf" "readlink", "isoinfo")
 CLEAN_UP=false
 
 source main.config
@@ -243,7 +243,12 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
     else
         if [[ "$local_file" == *.lha ]];    then process_listing() { lha lq "$local_file" | awk '{print $NF}'; }
         elif [[ "$local_file" == *.zip ]];  then process_listing() { unzip -Z1 "$local_file"; }
-        elif [[ "$local_file" == *.adf ]];  then process_listing() { unadf -r "$local_file" | awk '{print $NF}'; } 
+        elif [[ "$local_file" == *.adf ]];  then process_listing() { unadf -r "$local_file" | awk '{print $NF}'; }
+        # ISO extension handling: list files, remove leading slash, and strip ISO 9660 versioning (;1)
+        elif [[ "$local_file" == *.iso ]];  then process_listing() { isoinfo -R -f -i "$local_file" | sed -e 's/^\///' -e 's/;1$//' | iconv -f iso-8859-1 -t utf-8//TRANSLIT; }
+        else
+            log_warning "Unsupported file type for $pkg_name. Skipping content listing."
+            continue
         fi
 
         process_listing | while read -r src_item; do

@@ -139,7 +139,7 @@ This script is the companion tool for creating the `.desc` files required by the
 **Key features:**
 * **AmigaOS 3.2 Specialized Logic**: Includes dedicated rules for processing official AmigaOS 3.2 and Update ADFs. It mimics the behavior of the original Commodore/Hyperion install scripts (e.g., remapping `Startup-HardDrive` to `S:Startup-Sequence`, copying Backdrops to Presets, etc.).
 * **Generic Rule Engine**: For non-OS archives, the script applies a "best-guess" logic to place files in standard Amiga locations (e.g., `.library` to `Libs:`, `.device` to `Devs:`).
-* **Multi-Format Support**: Can parse and index `.lha`, `.zip`, and `.adf` archives.
+* **Multi-Format Support**: Can parse and index `.lha`, `.zip`, `.iso` and `.adf` archives.
 * **Smart Remapping**: Automatically detects and handles compressed `.z` files, stripping the extension for the destination path.
 
 > **Note**: While the specialized OS 3.2 logic is pretty accurate, the generic output for third-party software often serves as a template and **requires manual adjustment** to ensure perfect placement.
@@ -231,6 +231,8 @@ These must be installed on your Linux host before running any script. They are e
 | **partprobe** | Updating the kernel partition table (RDB/MBR). | [GNU Parted](https://www.gnu.org/software/parted/) |
 | **sed** | Path sanitization and configuration generation. | [GNU sed](https://www.gnu.org/software/sed/) |
 | **convmv** | convert amiga encoded filename to utf8 | [convmv] https://directory.fsf.org/wiki/Convmv |
+| **isoinfo** | examines and extracts information from ISO 9660 filesystem images | [isoinfo] https://github.com/cmatsuoka/isoinfo |
+
 
 ### 2. Auto-managed Components (Soft Dependencies)
 
