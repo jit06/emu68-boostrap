@@ -231,6 +231,33 @@ for task in "${TASKS[@]}"; do
             fi
         fi
 
+        # handle ".icons" files
+        icons_src="${desc_file%.desc}.icons"
+        if [[ -f "$icons_src" ]]; then
+            log_info "applying icons settings for: $pkg_name"
+            
+            iconv -f UTF-8 -t ISO-8859-1 "$icons_src" | while read -r line || [[ -n "$line" ]]; do
+                [[ -z "$line" || "$line" =~ ^# ]] && continue
+                # Use xargs to properly parse quoted strings with spaces
+                eval set -- "$line"
+                dest_raw="$1"
+                dest_amiga=$(echo "$dest_raw" | sed 's/^"\(.*\)"$/\1/; s/\/$//')
+
+                # Get Volume and Subpath
+                vol_name="${dest_amiga%%:*}"
+                sub_path="${dest_amiga#*:}"
+
+                target_icon="$STAGING_ROOT/${vol_name,,}/${sub_path}"
+
+                if [[ -f "$target_icon" ]]; then
+                    echo "$HSTA_BIN icon $2 $target_icon ${@:3}"
+                    
+                else
+                    log_warn "Target for icon $target_icon not found in staging. Skipping icon for this entry."
+                fi
+            done
+        fi
+
     done < "$current_list"
 done
 
@@ -254,7 +281,7 @@ for vol_dir in "$STAGING_ROOT"/*; do
         log_info "Transferring all files to Volume: $vol_label..."
         
         # copy the content of the staging volume directory (but not the folder itself)
-        # $HST_BIN fs copy "$vol_dir/" "$target_rdb_base" --recursive --force --quiet  &> /dev/null
+        $HST_BIN fs copy "$vol_dir/" "$target_rdb_base" --recursive --force --quiet  &> /dev/null
 
         if [[ $? != 0 ]]; then
             log_error "An error occured while copying files"

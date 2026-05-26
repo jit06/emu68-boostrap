@@ -1,0 +1,4 @@
+"Workbench:disk.info"   update -t 1 -x 0 -y 50
+"Apps:disk.info"        update -t 1 -x 0 -y 60
+"Games:disk.info"       update -t 1 -x 0 -y 70
+"Data:disk.info"        update -t 1 -x 0 -y 80

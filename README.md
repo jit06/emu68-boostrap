@@ -103,9 +103,38 @@ The deployment follows a **top-down priority** based on your package list. Softw
 * **Pre-configured Packages**: Several ready-to-use sets are available in the `packages` folder:
     * **OS32**: AmigaOS 3.2 & Update 3.2.3.
     * **emu68tools**: Specific utilities for PiStorm users.
-    * **addons**: SysInfo, KingCON, and other essential tools.
+    * **addons**: SysInfo, MUI, and other "essential" tools for modern Amiga.
 
 > **Note**: any `.user-startup` file will be injected in system partition `S/User-startup` and will automatically be surounded `;BEGIN <package name>` and `;END <package name>`
+
+#### Icons operations with ".icons" files
+Any package can be associated with a ".icons" file which contains orders passed through to hst.amiga command. The goal is to change icon type and positions in the staging area. It allows to customize any icons before copying files to the final destination.
+
+**The file format is basicaly :**
+```bash
+<Amiga style path to the .info file> <hst.amiga icon order> <hst.amiga command arguments>
+```
+**Example :**
+If you have a package with the following `StandardGlowIcons.desc` to copy a specific disk icon to the workbench partition:
+```bash
+"StandardGlowIcons/Drives/Harddrive/AmigaHDisk.info" "Workbench:disk.info"
+```
+
+You can then use the following `StandardGlowIcons.icons` file to set the icon type to `1` (`disk`) and fix its position to `0,50` on the workbench window
+
+```bash
+"Workbench:disk.info"   update -t 1 -x 0 -y 50
+```
+
+**Icons types are**
+* **1**: disk
+* **2**: drawer
+* **3**: tool
+* **4**: project
+* **5**: trashcan
+* **7**: kickstart
+* **8**: appicon
+
 
 ### Arguments & Options
 
