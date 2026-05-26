@@ -259,9 +259,9 @@ These must be installed on your Linux host before running any script. They are e
 | **iconv** | Handling UTF-8 to ISO-8859-1 filename conversion. | [GNU libiconv](https://www.gnu.org/software/libiconv/) |
 | **partprobe** | Updating the kernel partition table (RDB/MBR). | [GNU Parted](https://www.gnu.org/software/parted/) |
 | **sed** | Path sanitization and configuration generation. | [GNU sed](https://www.gnu.org/software/sed/) |
-| **convmv** | convert amiga encoded filename to utf8 | [convmv] (https://directory.fsf.org/wiki/Convmv) |
-| **isoinfo** | examines and extracts information from ISO 9660 filesystem images | [isoinfo] (https://github.com/cmatsuoka/isoinfo) |
-| **7zip** | extract files from an ISO 9660 filesystem images | [7zip] (https://www.7-zip.org) |
+| **convmv** | convert amiga encoded filename to utf8 | [convmv](https://directory.fsf.org/wiki/Convmv) |
+| **isoinfo** | examines and extracts information from ISO 9660 filesystem images | [isoinfo](https://github.com/cmatsuoka/isoinfo) |
+| **7zip** | extract files from an ISO 9660 filesystem images | [7zip](https://www.7-zip.org) |
 
 ### 2. Auto-managed Components (Soft Dependencies)
 
