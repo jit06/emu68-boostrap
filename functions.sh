@@ -33,16 +33,34 @@ check_dependencies() {
 }
 
 
-# download hst-imager if not already present in contribs folder
-# it only keeps the hst.imager executable, zip file is deleted
-# depends on config variable HST_IMAGER_REPO
-get_hst_imager() {
-    if [[ -f "$HST_BIN" ]]; then
-        log_info "hst.imager already present, skipping download."
+# download hst tool if not already present in contribs folder
+# it only keeps the hst.imager or hst.amiga executable, zip file is deleted
+get_hst_tool() {
+    local tool_name="$1"
+    if [[ -z "$tool_name" ]]; then
+        log_error "get_hst_tool requires a tool name argument (e.g., hst.imager)"
+    fi
+
+    # Define paths and repo dynamically based on the tool name
+    local tool_bin="./contribs/$tool_name"
+    local tool_zip_name="${tool_name//./-}" # converts hst.imager to hst-imager
+    
+    # If hst.amiga is in a different repo, we adjust the repo variable name dynamically
+    local repo_var="${tool_name^^}_REPO"    # e.g., HST_IMAGER_REPO or HST_AMIGA_REPO
+    repo_var="${repo_var//./_}"            # replaces dots with underscores
+    local current_repo="${!repo_var}"      # indirect variable reference
+    
+    # Fallback to HST_IMAGER_REPO if the specific repo variable isn't defined
+    if [[ -z "$current_repo" ]]; then
+        current_repo="$HST_IMAGER_REPO"
+    fi
+
+    if [[ -f "$tool_bin" ]]; then
+        log_info "$tool_name already present, skipping download."
         return
     fi
 
-    log_info "Detecting architecture and downloading hst-imager..."
+    log_info "Detecting architecture and downloading $tool_zip_name..."
     local arch=$(uname -m)
     local suffix=""
 
@@ -53,26 +71,26 @@ get_hst_imager() {
         *) log_error "Unsupported architecture: $arch" ;;
     esac
 
-    local download_url=$(curl -s https://api.github.com/repos/${HST_IMAGER_REPO}/releases/latest \
+    local download_url=$(curl -s https://api.github.com/repos/${current_repo}/releases/latest \
         | grep "browser_download_url" \
         | grep "$suffix.zip" \
         | cut -d '"' -f 4)
 
     if [[ -z "$download_url" ]]; then
-        log_error "Could not find hst-imager binary for $suffix"
+        log_error "Could not find $tool_name binary for $suffix"
     fi
 
     mkdir -p ./contribs
-    wget -q --show-progress "$download_url" -O ./contribs/hst-imager.zip
+    wget -q --show-progress "$download_url" -O ./contribs/${tool_zip_name}.zip
     if [[ $? -ne 0 ]]; then
         log_error "Could not download $download_url"
     fi
     
-    unzip -q -o ./contribs/hst-imager.zip -d ./contribs/ hst.imager
-    chmod +x ./contribs/hst.imager
-    rm ./contribs/hst-imager.zip
+    unzip -q -o ./contribs/${tool_zip_name}.zip -d ./contribs/ "$tool_name"
+    chmod +x "$tool_bin"
+    rm ./contribs/${tool_zip_name}.zip
 
-    log_success "./contribs/hst.imager ($suffix) is ready."
+    log_success "$tool_bin ($suffix) is ready."
 }
 
 

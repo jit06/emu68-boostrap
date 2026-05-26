@@ -1,6 +1,6 @@
 *.adf
-hst-imager*
 hst.imager*
+hst.amiga*
 Emu68-tools*
 packages/test*
 custom/*

@@ -63,7 +63,7 @@ cp contribs/pfs3aio "$TMP_SETUP_DIR/"
 cd "$TMP_SETUP_DIR"
 
 # Download hst imager if not yet done
-get_hst_imager
+get_hst_tool "hst.imager"
 
 # Download Emu68
 log_info "Downloading latest Emu68 release..."

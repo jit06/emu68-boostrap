@@ -232,14 +232,16 @@ These must be installed on your Linux host before running any script. They are e
 | **sed** | Path sanitization and configuration generation. | [GNU sed](https://www.gnu.org/software/sed/) |
 | **convmv** | convert amiga encoded filename to utf8 | [convmv] https://directory.fsf.org/wiki/Convmv |
 | **isoinfo** | examines and extracts information from ISO 9660 filesystem images | [isoinfo] https://github.com/cmatsuoka/isoinfo |
-
+| **7zip** | extract files from an ISO 9660 filesystem images | [7zip] https://www.7-zip.org |
 
 ### 2. Auto-managed Components (Soft Dependencies)
 
 To ensure compatibility and ease of use, the following components are **automatically downloaded and configured** by the scripts. You do not need to install these manually:
 
-* **hst.imager**: The core engine used for RDB partitioning, scripting, and high-speed filesystem transfers. The script fetches the latest version if it's not present in your path.
+* **hst.imager**: The core engine used for RDB partitioning, scripting, and high-speed filesystem transfers. The script fetches the latest version if it's not present in the contribs folder.
     * [Project Link](https://github.com/henrikstengaard/hst.imager)
+* **hst.amiga**: engine used to handle ".icons" files. The script fetches the latest version if it's not present in the contribs folder
+    * [Project Link](https://github.com/henrikstengaard/hst.amiga)
 * **Emu68 Firmware**: The latest release of the Emu68 firmware is automatically fetched from its official repository during the disk setup phase to populate the boot partition.
     * [Project Link](https://github.com/michalsc/Emu68)
 * **Amiga Filesystems**: **pfs3aio** is bundled to be automatically installed into the RDB (Rigid Disk Block) for optimal partition performance.

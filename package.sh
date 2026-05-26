@@ -65,7 +65,8 @@ done
 check_dependencies
 
 # Download hst imager if not yet done
-get_hst_imager 
+get_hst_tool "hst.imager"
+get_hst_tool "hst.amiga"
 
 # Initialize RDB index cache
 build_rdb_cache "$DISK_DEVICE"
