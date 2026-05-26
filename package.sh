@@ -11,7 +11,7 @@
 
 #set -e
 
-__DEPENDENCIES__=("wget" "unzip" "lha" "unadf" "readlink" "curl" "sed" "gunzip", "convmv")
+__DEPENDENCIES__=("wget" "unzip" "lha" "unadf" "readlink" "curl" "sed" "gunzip", "convmv", "7z")
 CLEAN_UP=false
 
 source main.config
@@ -155,6 +155,7 @@ for task in "${TASKS[@]}"; do
             *.lha) lha xqw="$extract_path" "$archive" &> /dev/null ;;
             *.zip) unzip -q -o "$archive" -d "$extract_path" ;;
             *.adf) cd "$extract_path" && unadf -w "$archive" &> /dev/null && cd - > /dev/null ;;
+            *.iso) 7z x "$archive" -o"$extract_path" -y &> /dev/null ;;
         esac
 
         # Build local tree ensuring good encoding convertion 
@@ -252,7 +253,7 @@ for vol_dir in "$STAGING_ROOT"/*; do
         log_info "Transferring all files to Volume: $vol_label..."
         
         # copy the content of the staging volume directory (but not the folder itself)
-        $HST_BIN fs copy "$vol_dir/" "$target_rdb_base" --recursive --force --quiet  &> /dev/null
+        # $HST_BIN fs copy "$vol_dir/" "$target_rdb_base" --recursive --force --quiet  &> /dev/null
 
         if [[ $? != 0 ]]; then
             log_error "An error occured while copying files"
