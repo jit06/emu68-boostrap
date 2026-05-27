@@ -6,7 +6,7 @@ powerpackerlib      https://aminet.net/util/libs/pplib020.lha
 AmigaTestKit        https://github.com/keirf/amiga-stuff/releases/download/testkit-v1.21/AmigaTestKit-1.21.zip
 AHI                 https://aminet.net/driver/audio/ahiusr_4.18.lha
 AHI-Paula           https://aminet.net/driver/audio/AHI-Paula.lha
-CFD                 https://aminet.net/driver/media/cfd141.lha
+CFD                 https://aminet.net/driver/media/cfd.v1.43.lha
 codesets            https://aminet.net/util/libs/codesets-6.22.lha
 rewindcy            https://aminet.net/util/cdity/rewincy.lha
 Mecho               https://aminet.net/util/batch/mecho.lha
@@ -27,7 +27,7 @@ Miami-Key           https://www.retrospace.net/download/Amiga/MiamiDXKeys.lha
 AmiSSL              https://aminet.net/util/libs/AmiSSL-v5-OS3.lha
 NetSurf             http://netsurf.baderman.net/NetSurf-m68k-3.11.lha
 smb2fs              https://aminet.net/disk/misc/smb2fs.m68k-amigaos.lha
-fat95               https://aminet.net/disk/misc/fat95.v3.21.lha
+fat95               https://aminet.net/disk/misc/fat95.v3.23.lha
 Avalanche           https://aminet.net/util/arc/avalanche.lha
 stackattack         https://aminet.net/util/boot/StackAttack2.lha
 freetype2           https://aminet.net/util/libs/freetype2_lib.lha
