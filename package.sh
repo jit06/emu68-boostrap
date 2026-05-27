@@ -250,8 +250,7 @@ for task in "${TASKS[@]}"; do
                 target_icon="$STAGING_ROOT/${vol_name,,}/${sub_path}"
 
                 if [[ -f "$target_icon" ]]; then
-                    echo "$HSTA_BIN icon $2 $target_icon ${@:3}"
-                    
+                    "$HSTA_BIN" icon $2 "$target_icon" "${@:3}" &> /dev/null
                 else
                     log_warn "Target for icon $target_icon not found in staging. Skipping icon for this entry."
                 fi
