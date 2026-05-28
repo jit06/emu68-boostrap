@@ -39,7 +39,9 @@ ScreenTime          https://aminet.net/util/time/ScreenTime.lha
 DrawerGenie         https://github.com/daedalus2097/drawergenie/releases/download/v0.8/DrawerGenie.lha
 TreeExplorer        https://aminet.net/util/dir/TreeExplorer.lha
 WBMenuEditor        https://aminet.net/util/wb/WBMenuEditorV1.0.lha
+ReqToolsLib         https://aminet.net/util/libs/ReqToolsLib.lha
 Tasko               https://aminet.net/util/dir/Tasko.zip
+Guigfxlib           https://aminet.net/dev/mui/MCC_Guigfx.lha
 #ViNCEd              https://aminet.net/util/shell/ViNCEd.lha
 #ViNCEdThemes        https://aminet.net/util/shell/ViNCEdThemes.lha
 #ViNCEdBoot          https://aminet.net/util/shell/ViNCEd_Boot_Shin.lha
