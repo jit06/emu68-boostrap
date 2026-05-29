@@ -247,7 +247,7 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
         # ISO extension handling: list files, remove leading slash, and strip ISO 9660 versioning (;1)
         elif [[ "$local_file" == *.iso ]];  then process_listing() { isoinfo -R -f -i "$local_file" | sed -e 's/^\///' -e 's/;1$//' | iconv -f iso-8859-1 -t utf-8//TRANSLIT; }
         else
-            log_warning "Unsupported file type for $pkg_name. Skipping content listing."
+            log_warn "Unsupported file type for $pkg_name. Skipping content listing."
             continue
         fi
 
