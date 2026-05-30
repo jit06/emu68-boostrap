@@ -250,6 +250,34 @@ while read -r pkg_name pkg_source || [[ -n "$pkg_name" ]]; do
             log_warn "Unsupported file type for $pkg_name. Skipping content listing."
             continue
         fi
+        
+        # Special treatment for WHDLoad games packages
+        dest_dir="$(basename $PKG_DEST_DIR)"
+        if [[ "$dest_dir" == "whdlgames" ]]; then
+            # We filter the listing to find the first item that is NOT a .info file
+            # to correctly identify the main directory.
+            first_item=$(process_listing | tr -d '\r' | sed 's/^\///' | grep -v "\.info$" | head -n 1)
+            
+            if [[ -n "$first_item" ]]; then
+                # Extract the top-level directory name
+                top_dir="${first_item%%/*}"
+                
+                log_info "WHDLoad game package detected. Generating optimized description for root: $top_dir"
+                
+                # 1. Generate line for the top-level directory
+                dest_dir=$(get_generic_destination "$top_dir" "$pkg_name" 1)
+                echo "\"$top_dir/\" \"$dest_dir/\"" >> "$DESC_FILE"
+                
+                # 2. Generate line for the associated .info file (the icon)
+                top_info="${top_dir}.info"
+                dest_info=$(get_generic_destination "$top_info" "$pkg_name" 1)
+                echo "\"$top_info\" \"$dest_info\"" >> "$DESC_FILE"
+            else
+                log_warn "Could not determine top-level directory for whdlgames archive."
+            fi
+            
+            continue
+        fi
 
         process_listing | while read -r src_item; do
             # Clean string and skip directories

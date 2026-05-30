@@ -100,8 +100,15 @@ get_hst_tool() {
 get_generic_destination() {
     local src_path="$1"
     local pkg_name="$2"
+    local is_whdlgame="$3"
     local dest_base=""
     local relative_path=""
+    
+    # special handling for WHDLoad games packages
+    if [[ "$is_whdlgame" -eq 1 ]]; then
+        echo "Games:WHDLoadGames/${src_path}"
+        return
+    fi
 
     # 1. Special Case: Catalogs (must go to Locale/Catalogs/)
     if [[ "$src_path" =~ (.*)/Catalogs/(.*) ]]; then
