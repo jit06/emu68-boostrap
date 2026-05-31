@@ -1,4 +1,4 @@
 "Workbench:disk.info"   update -t 1 -x 20 -y 50 -dx 80 -dy 50 -dw 465 -dh 165 
 "Apps:disk.info"        update -t 1 -x 17 -y 100
-"Games:disk.info"       update -t 1 -x 17 -y 200
-"Data:disk.info"        update -t 1 -x 17 -y 270
+"Games:disk.info"       update -t 1 -x 17 -y 158
+"Data:disk.info"        update -t 1 -x 22 -y 221
