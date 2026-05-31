@@ -1,4 +1,3 @@
-
 # Full documentation for Emu68-Boostrap
 
 - [Full documentation for Emu68-Boostrap](#full-documentation-for-emu68-boostrap)
@@ -17,6 +16,7 @@
   - [Configuration Formats](#configuration-formats)
     - [Package List File](#package-list-file)
   - [Package Description](#package-description)
+
 
 ## Initialize disk and Amiga partitions
 

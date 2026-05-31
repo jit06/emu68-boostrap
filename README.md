@@ -13,20 +13,20 @@
     - [Auto-managed Components (Soft Dependencies)](#auto-managed-components-soft-dependencies)
   - [Repository Structure](#repository-structure)
 
-
 ## Overview
+
 This toolchain provides a headless, Linux-native alternative to [Emu68-Imager](https://mja65.github.io/Emu68-Imager/). It is designed for users who need a powerful, scriptable way to prepare SD cards or disk images for Amiga systems (including Emu68/PiStorm) without a graphical interface.
 
 Everything is customizable:
 
-* **Partition scheme**: Define exactly how your disk is structured.
-* **Emu68 config files**: Full control over your PiStorm/Emu68 setup.
-* **Software payload**: Choose exactly what to install on your Amiga partitions.
+- **Partition scheme**: Define exactly how your disk is structured.
+- **Emu68 config files**: Full control over your PiStorm/Emu68 setup.
+- **Software payload**: Choose exactly what to install on your Amiga partitions.
 
 Installation of Amiga software (including AmigaOS) is managed by a basic package mechanism consisting of a **package list** and **package description files**.
 
-* The **list** identifies the archives to install (LHA, ZIP, ISO or ADF).
-* The **description file** (`.desc`) specifies where to copy each file from the archive to any Amiga partition.
+- The **list** identifies the archives to install (LHA, ZIP, ISO or ADF).
+- The **description file** (`.desc`) specifies where to copy each file from the archive to any Amiga partition.
 
 While package description files can be generated automatically, they usually allow for fine-tuned customization.
 
@@ -40,7 +40,7 @@ The following give you a quick overview of how to use it. For detailed instructi
 
 ### 1. Partition the Disk
 
-Initialize the RDB partitions, set up the filesystem, and provide the required Kickstart ROM.
+Initialize the RDB partitions and set up the filesystem based on `partitions.config`, then provide the required ickstart ROM for emu68
 
 ```bash
 sudo ./setup_disk.sh -d /dev/sdc -k A1200.47.115.rom
@@ -49,7 +49,7 @@ sudo ./setup_disk.sh -d /dev/sdc -k A1200.47.115.rom
 ### 2. Deploy Amiga OS
 
 Install AmigaOS 3.2, emu68 tools and some system addons. In this example, we map the Amiga volume label "Workbench" to the physical device name "SDH0" defined in the RDB.
-Off course you have to provide your own ADF files of Amiga OS 3.2 and updates that must be copie respectively in `AmigaOS_ADF` and `AmigaOSUpdate_ADF` directories
+Off course you have to provide your own ADF files of Amiga OS 3.2 that must be copied in `AmigaOS_ADF` for base files and in `AmigaOSUpdate_ADF` for update ADF.
 
 ```bash
 sudo ./package.sh -d /dev/sdc -m SDH0=Workbench -i OS32,emu68tools,picasso96,addons
