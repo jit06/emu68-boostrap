@@ -106,7 +106,7 @@ get_generic_destination() {
     
     # special handling for WHDLoad games packages
     if [[ "$is_whdlgame" -eq 1 ]]; then
-        echo "Games:WHDLoadGames/${src_path}"
+        echo "Games:WHDLoadGames/${src_path:0:1}/${src_path}"
         return
     fi
 
