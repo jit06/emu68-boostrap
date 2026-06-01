@@ -240,3 +240,5 @@ Any file present in the archive but not listed in a ".desc" file will be ignored
 "SysInfo.info"  "Workbench:Tools/SysInfo.info"
 "Docs/"         "Workbench:Docs/"
 ```
+
+Please read the [Packages Reference](PackageReference.md) before sending new ones
