@@ -170,7 +170,7 @@ The `generate_package.sh` script is the companion tool for creating the `.desc` 
 (re)generate descriptions files for Amiga OS 3.2 ADF files listed in packages-OS32.list
 
 ```bash
-./gen_package_desc.sh -l packages-OS32.list -p packages-OS32
+./generate_package.sh -l OS32.list -p packages/OS32/
 ```
 
 For more defails on files format, please see next chapter.
