@@ -2,6 +2,8 @@
 
 The following document serves as rules for creating and modifying a package. Feel free to propose new ones or add new software in existing packages.
 
+>Note: I created [adf2zip](https://github.com/jit06/adf2zip), a companion tool that automates the extraction, reconstruction, and repackaging of applications which employs complex storage techniques to fit data onto fewer floppies (lha inside ADF, splitted files, etc.).
+
 ## Supported Language
 
 By convention or simplicity (who said lazyness ?), no catalogs nor locale files are installed. All packages relies on the original english language
