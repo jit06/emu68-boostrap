@@ -12,6 +12,7 @@
     - [System Prerequisites (Hard Dependencies)](#system-prerequisites-hard-dependencies)
     - [Auto-managed Components (Soft Dependencies)](#auto-managed-components-soft-dependencies)
   - [Repository Structure](#repository-structure)
+  - [Plans for futures releases](#plans-for-futures-releases)
 
 ## Overview
 
@@ -113,3 +114,20 @@ To ensure compatibility and ease of use, the following components are **automati
 | partitions.config     | no            | example of partition scheme used by setup_disk.sh     |
 | README.md             | no            | you're reading it                                     |
 | setup_disk.sh         | no            | see below : initialize disk for PiStorm               |
+
+## Plans for futures releases
+
+This are idea I would like to add in future versions with no particular order.
+
+- Out of the box PiStorm configuration for Miami
+- More glowicons replacements for applications
+- Better icons position on the workbench partition
+- Remove contribs from git and put then as assets on releases
+- Add a hook mecanism that allows executing a script just before transfering files to Amiga partitions
+- Split Addons package in smaller part for a more refined install
+- Add package to set default Workbench Screen
+- Add ECS / OCS games from my own selection (pimyretro.org)
+- Add Native HDD game from ISO that do not contains CDDA tracks
+- Create an Amiga Tools that "backup" all settings and icons positions into a installable package
+- Test and document how to use ".icons" file to insert ToolsType
+- Check existsing library version before copying to Workbench:Libs in order not to replace a version with an older one
