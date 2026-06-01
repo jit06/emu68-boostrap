@@ -35,6 +35,8 @@ While package description files can be generated automatically, they usually all
 
 Either clone this repository or download the latest release (if any). Every thing that is Amiga related is automaticaly downloaded. However, all the scripts have some dependencie : check the chapter [## Dependencies](#dependencies).
 
+>Note: Emu68 Boostrap scripts as well as this repository **do not contains any commercial software**. Anything used by the scripts are downloaded from the internet on **publically available web sites** that I don't own nor control.
+
 ## Typical Usage
 
 The following give you a quick overview of how to use it. For detailed instruction see the [full documentation](Documentation.md).
