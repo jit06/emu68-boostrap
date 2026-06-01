@@ -52,8 +52,10 @@ Install AmigaOS 3.2, emu68 tools and some system addons. In this example, we map
 Off course you have to provide your own ADF files of Amiga OS 3.2 that must be copied in `AmigaOS_ADF` for base files and in `AmigaOSUpdate_ADF` for update ADF.
 
 ```bash
-sudo ./package.sh -d /dev/sdc -m SDH0=Workbench -i OS32,emu68tools,picasso96,addons
+./package.sh -d /dev/sdc -m SDH0=Workbench -i OS32,emu68tools,picasso96,addons
 ```
+
+>Note: as this script need to do some disk operations, it uses `sudo` and thus you may be prompted for a password.
 
 ## Dependencies
 
@@ -65,6 +67,7 @@ These must be installed on your Linux host before running any script. They are e
 
 | Tool | Purpose | Source / Project |
 | :--- | :--- | :--- |
+| **sudo** | root permissions are required for disk related operations | [sudo](https://www.sudo.ws/) |
 | **wget** / **curl** | Downloading remote components and packages. | [Wget](https://www.gnu.org/software/wget/) / [Curl](https://curl.se/) |
 | **lha** | Extracting Amiga `.lha` archives. | [GitHub](https://github.com/jca02266/lha) |
 | **unadf** | Extracting files from Amiga Disk Files (`.adf`). | [unADF](http://lclevy.free.fr/adflib/) |

@@ -154,7 +154,7 @@ build_rdb_cache() {
     local disk="$1"
     log_info "Scanning disk RDB for device names..."
 
-    local rdb_info=$($HST_BIN rdb info "${disk}/mbr/2")
+    local rdb_info=$(sudo $HST_BIN rdb info "${disk}/mbr/2")
     
     local in_partition_section=false
 

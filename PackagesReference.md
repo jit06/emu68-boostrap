@@ -18,7 +18,7 @@ By convention or simplicity (who said lazyness ?), no catalogs nor locale files 
 ## Package organization
 
 | Package File  | Description        |
-|---------------|-----------------|
+| :--- | :--- |
 | addons   | Various OS addons which are installed in the `Workbench` partition        |
 | emu68tools | Tools and drivers to manage emu68 on a PiStorm          |
 | games     | Amiga games with native HDD compatibility and no WHDload slave        |

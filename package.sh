@@ -11,14 +11,14 @@
 
 #set -e
 
-__DEPENDENCIES__=("wget" "unzip" "lha" "unadf" "readlink" "curl" "sed" "gunzip", "convmv", "7z")
+__DEPENDENCIES__=("sudo" "wget" "unzip" "lha" "unadf" "readlink" "curl" "sed" "gunzip", "convmv", "7z")
 CLEAN_UP=false
 
 source main.config
 source functions.sh
 
 usage() {
-    echo "Usage: sudo $0 --disk [DEVICE] [OPTIONS]"
+    echo "Usage: $0 --disk [DEVICE] [OPTIONS]"
     echo ""
     echo "Required (choose one):"
     echo "  -i, --install        Names of packages to install (e.g. OS32,Addons)"
@@ -59,7 +59,6 @@ done
 [[ -z "$DISK_DEVICE" ]] && usage
 [[ -n "$INSTALL_ITEMS" && (-n "$LIST_PATH" || -n "$DESC_DIR") ]] && log_error "Cannot use --install with --package-list or --packages-path"
 [[ -z "$INSTALL_ITEMS" && ( -z "$LIST_PATH" || -z "$DESC_DIR" ) ]] && usage
-[[ $(id -u) -ne 0 ]] && log_error "This script must be run as root (sudo)."
 
 # ensure all needed programs are presents
 check_dependencies
@@ -280,7 +279,7 @@ for vol_dir in "$STAGING_ROOT"/*; do
         log_info "Transferring all files to Volume: $vol_label..."
         
         # copy the content of the staging volume directory (but not the folder itself)
-        $HST_BIN fs copy "$vol_dir/" "$target_rdb_base" --recursive --force --quiet  &> /dev/null
+        sudo $HST_BIN fs copy "$vol_dir/" "$target_rdb_base" --recursive --force --quiet  &> /dev/null
 
         if [[ $? != 0 ]]; then
             log_error "An error occured while copying files"
