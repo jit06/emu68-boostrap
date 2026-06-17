@@ -46,7 +46,7 @@ The following give you a quick overview of how to use it. For detailed instructi
 Initialize the RDB partitions and set up the filesystem based on `partitions.config`, then provide the required ickstart ROM for emu68
 
 ```bash
-sudo ./setup_disk.sh -d /dev/sdc -k A1200.47.115.rom
+./setup_disk.sh -d /dev/sdc -k A1200.47.115.rom
 ```
 
 ### 2. Deploy Amiga OS
