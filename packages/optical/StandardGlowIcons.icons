@@ -1,0 +1,5 @@
+"Apps:MakeCD_3.2d/MakeCD.info" update -t 3
+"Apps:MakeCD_3.2d/CopyCD.info" update -t 3
+"Apps:MakeCD_3.2d/ReadMe.guide.info" update -t 4
+"Apps:MakeCD_3.2d/HWGCTRLscsi.info" update -t 2
+"Apps:ACDPlay/ACDPlay.info" update -t 2

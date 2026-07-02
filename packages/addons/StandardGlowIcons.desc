@@ -8,3 +8,9 @@
 "StandardGlowIcons/Applications/Y/YAM.info" "Workbench:Network/Yam/YAM.info"
 "StandardGlowIcons/Applications/F/FontTool.info" "Workbench:System/FTManager.info"
 "StandardGlowIcons/Applications/A/AmigaSystem1.info" Workbench:System/AmigaTestKit.info
+"StandardGlowIcons/Preferences/2/ENV_Volume1.info" "Workbench:System/EnvVars.info"
+"StandardGlowIcons/Applications/S/SGrab.info" "Workbench:Tools/Commodities/GrabScreen.info"
+"StandardGlowIcons/Applications/I/IconEdit.info" "Workbench:Tools/iTidy.info"
+"StandardGlowIcons/Applications/M/Meter.info" "Workbench:Tools/Commodities/NewMeter.info"
+"StandardGlowIcons/Applications/T/Time2.info" "Workbench:Tools/Commodities/ScreenTime.info"
+"StandardGlowIcons/Applications/B/Button Start Blue.info" "Workbench:System/tabexec.info"

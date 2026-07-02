@@ -1,0 +1,7 @@
+"Workbench:System/EnvVars.info" update -t 3
+"Workbench:Tools/Commodities/GrabScreen.info" update -t 3
+"Workbench:Tools/iTidy.info" update -t 3
+"Workbench:Tools/Commodities/NewMeter.info" update -t 3
+"Workbench:Tools/Commodities/NewMeter.info" tooltypes import newmeter.tooltypes
+"Workbench:Tools/Commodities/ScreenTime.info" update -t 3
+"Workbench:System/tabexec.info" update -t 3
