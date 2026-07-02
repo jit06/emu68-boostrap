@@ -123,6 +123,7 @@ This are idea I would like to add in future versions with no particular order.
 
 - Out of the box PiStorm configuration for Miami
 - More glowicons replacements for applications
+- Make Drawer icons for Addons independant of workbench packages (MUI, Tasko, etc.)  
 - Better icons position on the workbench partition
 - Remove contribs from git and put then as assets on releases
 - Add a hook mecanism that allows executing a script just before transfering files to Amiga partitions
