@@ -249,7 +249,21 @@ for task in "${TASKS[@]}"; do
                 target_icon="$STAGING_ROOT/${vol_name,,}/${sub_path}"
 
                 if [[ -f "$target_icon" ]]; then
-                    "$HSTA_BIN" icon $2 "$target_icon" "${@:3}" &> /dev/null
+                   declare -a cmd_args
+                    
+                    if [[ "$2" == "tooltypes" && "$3" == "import" ]]; then
+                        # get the absolute path of the tooltypes file relative to the icons file
+                        icons_dir=$(dirname "$icons_src")
+                        tooltypes_file=$(readlink -f "${icons_dir}/$4")
+                        
+                        # change order for hst.amiga call (ex: hst.amiga icon tooltypes import <target_icon> <tooltypes_file>)
+                        cmd_args=("$2" "$3" "$target_icon" "$tooltypes_file" "${@:5}")
+                    else
+                        # Default order (eg: hst.amiga icon update <target_icon> -t 3)
+                        cmd_args=("$2" "$target_icon" "${@:3}")
+                    fi
+
+                    "$HSTA_BIN" icon "${cmd_args[@]}" &> /dev/null
                 else
                     log_warn "Target for icon $target_icon not found in staging. Skipping icon for this entry."
                 fi

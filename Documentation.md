@@ -132,6 +132,11 @@ You can then use the following `StandardGlowIcons.icons` file to set the icon ty
 "Workbench:disk.info"   update -t 1 -x 20 -y 50 -dx 80 -dy 50 -dw 465 -dh 165
 ```
 
+It is also possible to set tooltypes. In that case, the `newmeter.tooltypes` is a simple text file which is on the same directory as the .icons file
+```bash
+"Workbench:Tools/Commodities/NewMeter.info" tooltypes import newmeter.tooltypes
+```
+
 #### Icon types reference
 
 - **1**: disk
