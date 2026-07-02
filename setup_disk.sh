@@ -72,7 +72,7 @@ wget -q --show-progress "$EMU68_RELEASE_URL" -O emu68.zip
 if [[ $? -ne 0 ]]; then
     log_error "Could not download $EMU68_RELEASE_URL"
 fi
-unzip -q emu68.zip -d emu68_files
+unzip -q -o emu68.zip -d emu68_files
 log_success "Emu68 downloaded and extracted."
 
 # Prepare Partition Script
