@@ -98,18 +98,55 @@ log_info "Setting up EMU68 boot partition..."
 cp "$KICKSTART_PATH" emu68_files/kick.rom
 
 # mount the just created emu68 partition 
-mkdir -p "$MOUNT_POINT"
-sudo partprobe "$DISK_PATH"
-sleep 2 
-sudo mount "${DISK_PATH}1" "$MOUNT_POINT" || log_error "Failed to mount ${DISK_PATH}1"
+sudo mkdir -p "$MOUNT_POINT"
+log_info "Mounting boot partition..."
+
+# Change handling depending on given device file or real device 
+if [[ -f "$DISK_PATH" ]]; then
+    sudo losetup -fP "$DISK_PATH"
+    REAL_LOOP=$(losetup -j "$DISK_PATH" | cut -d':' -f1 | tail -n 1)
+
+    if [[ -z "$REAL_LOOP" ]]; then
+        log_error "Could not find associated loop device for $DISK_PATH"
+    fi
+
+    TARGET_PART="${REAL_LOOP}p1"
+    log_info "Detected partition layout. Mounting ${TARGET_PART} to ${MOUNT_POINT}..."
+    
+    sudo mount "$TARGET_PART" "$MOUNT_POINT" || log_error "Failed to mount $TARGET_PART"
+    log_success "Image mounted successfully!"
+    
+    LOOP_DEV="$REAL_LOOP"
+else
+    # Méthode classique pour une vraie carte SD / clé USB
+    sudo partprobe "$DISK_PATH"
+    sleep 2
+    
+    if [[ "$DISK_PATH" == *"mmcblk"* ]]; then
+        TARGET_PART="${DISK_PATH}p1"
+    else
+        TARGET_PART="${DISK_PATH}1"
+    fi
+    
+    sudo mount "$TARGET_PART" "$MOUNT_POINT" || log_error "Failed to mount $TARGET_PART"
+fi
 
 # copy emu68 files to partition
-log_info "Copying files to ${DISK_PATH}1..."
+log_info "Copying files to ${DISK_PATH}..."
 sudo cp -r emu68_files/* "$MOUNT_POINT/"
 sudo sync
 
-sudo umount "$MOUNT_POINT"
-log_success "Emu68 installation complete."
+if mountpoint -q "$MOUNT_POINT"; then
+    log_info "Unmounting $MOUNT_POINT..."
+    sudo umount -l "$MOUNT_POINT"
+fi
+
+if [[ -n "$LOOP_DEV" ]]; then
+    log_info "Detaching loop device $LOOP_DEV..."
+    if losetup "$LOOP_DEV" &>/dev/null; then
+        sudo losetup -d "$LOOP_DEV" || log_warn "Could not detach $LOOP_DEV automatically."
+    fi
+fi
 
 
 # Cleanup if needed
