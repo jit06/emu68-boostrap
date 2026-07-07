@@ -10,7 +10,7 @@
 #   - part 2 : 0x76, contains Amiga RDB partitions which are formated
 # ==============================================================================
 
-set -e
+# set -e
 
 __DEPENDENCIES__=("wget" "unzip" "sed" "partprobe" "mount" "umount" "curl" "sudo")
 CLEAN_UP=false
@@ -84,9 +84,10 @@ sed "s|\[PATH_TO_DISK\]|$DISK_PATH|g" "$OLDPWD/partitions.config" > generated_pa
 
 # initialize disc and create Amiga partitions
 log_info "Initializing disk and creating partitions..."
-sudo $HST_BIN script generated_partitions.config > /dev/null
-if [[ $? -ne 0 ]]; then
-    log_error "could not initialize disk with : $HST_BIN script generated_partitions.config"
+sudo $HST_BIN script generated_partitions.config > $TMP_HSIMAGER_LOG
+if [[ $? != 0 ]]; then
+    tail -n 20 $TMP_HSIMAGER_LOG
+    log_error "could not initialize disk with : $HST_BIN script generated_partitions.config. Log file is $TMP_HSIMAGER_LOG"
 fi
 log_success "Disk partitioned and RDB initialized."
 
