@@ -21,6 +21,7 @@
 ## Initialize disk and Amiga partitions
 
 The `setup_disk.sh` script is responsible for the low-level preparation of the storage medium. It automates the creation of a hybrid partition structure compatible with both the host hardware (via MBR) and the Amiga environment (via RDB).
+Beware, some integrated sdcard reader (eg. in laptop) expose something like/dev/mmcblk0 but does not support low level IOCTL, making hst-imager unable to create Amiga partitions. 
 
 **Key actions done by the script:**
 
