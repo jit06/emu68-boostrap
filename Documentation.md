@@ -21,7 +21,10 @@
 ## Initialize disk and Amiga partitions
 
 The `setup_disk.sh` script is responsible for the low-level preparation of the storage medium. It automates the creation of a hybrid partition structure compatible with both the host hardware (via MBR) and the Amiga environment (via RDB).
+
 Beware, some integrated sdcard reader (eg. in laptop) expose something like/dev/mmcblk0 but does not support low level IOCTL, making hst-imager unable to create Amiga partitions. 
+
+>**note**: it is possible to a file instead of a real device.
 
 **Key actions done by the script:**
 
@@ -52,7 +55,17 @@ Beware, some integrated sdcard reader (eg. in laptop) expose something like/dev/
 ### Usage Example
 
 ```bash
-sudo ./setup_disk.sh -d /dev/sdc -k ./roms/kick32.rom --clean-on-close
+./setup_disk.sh -d /dev/sdc -k ./roms/kick32.rom --clean-on-close
+```
+
+If the device is an image that you want to test with an emulator, you may need to use loop device instead of the file, as it contains a partition scheme.
+The example below will generate a 16Gb image, prepare it and create something like `/dev/loop0p1` and `/dev/loop0p2`. The entry /dev/loop0p2 contains the Amiga RDB definition, thus it can be used in an emulator (eg. Amiberry). You may need to use "hardfile" and not "hardrive".
+
+```bash
+dd if=/dev/zero of=/path/to/amigadisk.img bs=1M count=16384 
+./setup_disk.sh -d /path/to/amigadisk.img -k ./roms/kick32.rom --clean-on-close
+sudo losetup -fP /path/to/amigadisk.img 
+
 ```
 
 ## Install Amiga software
