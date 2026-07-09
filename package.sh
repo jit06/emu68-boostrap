@@ -12,6 +12,7 @@
 #set -e
 
 __DEPENDENCIES__=("sudo" "wget" "unzip" "lha" "unadf" "readlink" "curl" "sed" "gunzip", "convmv", "7z")
+
 CLEAN_UP=false
 
 source main.config
@@ -31,6 +32,7 @@ usage() {
     echo ""
     echo "Options:"
     echo "  -m, --mapping        Map Device to Volume (e.g., --mapping SDH0=Workbench)"
+    echo "  -s, --post-script    Path to a bash script to run before bulk transfer"
     echo "  --clean-on-close     Remove downloads and extractions after completion"
     echo "  -h, --help           Display this help"
     exit 1
@@ -40,11 +42,12 @@ usage() {
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        -i|--install)       INSTALL_ITEMS="$2";             shift 2 ;;
-        -l|--package-list)  LIST_PATH=$(readlink -f "$2");  shift 2 ;;
-        -p|--packages-path) DESC_DIR=$(readlink -f "$2");   shift 2 ;;
-        -d|--disk)          DISK_DEVICE="$2";               shift 2 ;;
-        --clean-on-close)   CLEAN_UP=true;                  shift ;;
+        -i|--install)       INSTALL_ITEMS="$2";                     shift 2 ;;
+        -l|--package-list)  LIST_PATH=$(readlink -f "$2");          shift 2 ;;
+        -p|--packages-path) DESC_DIR=$(readlink -f "$2");           shift 2 ;;
+        -d|--disk)          DISK_DEVICE="$2";                       shift 2 ;;
+        -s|--post-script)   POST_SCRIPT_PATH=$(readlink -f "$2");   shift 2 ;;
+        --clean-on-close)   CLEAN_UP=true;                          shift ;;
         -m|--mapping)
             IFS="=" read -r dev vol <<< "$2"
             USER_MAP["${vol,,}"]="${dev,,}"
@@ -59,6 +62,9 @@ done
 [[ -z "$DISK_DEVICE" ]] && usage
 [[ -n "$INSTALL_ITEMS" && (-n "$LIST_PATH" || -n "$DESC_DIR") ]] && log_error "Cannot use --install with --package-list or --packages-path"
 [[ -z "$INSTALL_ITEMS" && ( -z "$LIST_PATH" || -z "$DESC_DIR" ) ]] && usage
+if [[ -n "$POST_SCRIPT_PATH" ]]; then
+    [[ ! -f "$POST_SCRIPT_PATH" ]] && log_error "Post-processing script not found: $POST_SCRIPT_PATH"
+fi
 
 # ensure all needed programs are presents
 check_dependencies
@@ -263,7 +269,7 @@ for task in "${TASKS[@]}"; do
                         cmd_args=("$2" "$target_icon" "${@:3}")
                     fi
 
-                    "$HSTA_BIN" icon "${cmd_args[@]}" &> /dev/null
+                    "$HSTA_BIN" icon "${cmd_args[@]}" > $TMP_HSAMIGA_LOG
                 else
                     log_warn "Target for icon $target_icon not found in staging. Skipping icon for this entry."
                 fi
@@ -275,6 +281,32 @@ done
 
 log_info "Fixing filename encodings in staging directory..."
 convmv -f iso-8859-1 -t utf-8 -r --notest "$STAGING_ROOT/" &> /dev/null
+
+# Execute optional post-processing script
+if [[ -n "$POST_SCRIPT_PATH" ]]; then
+    log_info "Running post-processing script: $(basename "$POST_SCRIPT_PATH")"
+    
+    # Resolve the directory where package.sh is located to find library.sh
+    SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+    LOCAL_LIB="${SCRIPT_DIR}/library.sh"
+    
+    if [[ -f "$LOCAL_LIB" ]]; then
+        # Source the library so its functions become available in the current context
+        source "$LOCAL_LIB"
+    else
+        log_warn "library.sh not found at $LOCAL_LIB, post-script might miss helper functions."
+    fi
+
+    # Export some variables to ensure it is accessible by library.sh and any sub-shells
+    export STAGING_ROOT
+    export HSTA_BIN
+    export HST_BIN
+    
+    # Execute the user script within the current environment using "source"
+    # This grants it native access to $STAGING_ROOT and all loaded helper functions
+    cd $STAGING_ROOT
+    source "$POST_SCRIPT_PATH"
+fi
 
 # Use hst.imager to copy the staging directory of each volume to the corresponding Amiga partition
 log_info "Performing bulk transfer to disk..."
@@ -293,10 +325,11 @@ for vol_dir in "$STAGING_ROOT"/*; do
         log_info "Transferring all files to Volume: $vol_label..."
         
         # copy the content of the staging volume directory (but not the folder itself)
-        sudo $HST_BIN fs copy "$vol_dir/" "$target_rdb_base" --recursive --force --quiet  &> /dev/null
+        sudo $HST_BIN fs copy "$vol_dir/" "$target_rdb_base" --recursive --force --quiet > $TMP_HSIMAGER_LOG
 
         if [[ $? != 0 ]]; then
-            log_error "An error occured while copying files"
+            tail -n 20 $TMP_HSIMAGER_LOG
+            log_error "An error occured while copying files. Log file is $TMP_HSIMAGER_LOG."
         fi
     fi
 done
