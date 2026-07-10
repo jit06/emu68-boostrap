@@ -55,7 +55,7 @@ Install AmigaOS 3.2, emu68 tools and some system addons. In this example, we map
 Off course you have to provide your own ADF files of Amiga OS 3.2 that must be copied in `AmigaOS_ADF` for base files and in `AmigaOSUpdate_ADF` for update ADF.
 
 ```bash
-./package.sh -d /dev/sdc -m SDH0=Workbench -i OS32,emu68tools,picasso96,addons
+./package.sh -d /dev/sdc -m SDH0=Workbench -s pp-template.sh -i OS32,emu68tools,picasso96,addons
 ```
 
 >Note: as this script need to do some disk operations, it uses `sudo` and thus you may be prompted for a password.
@@ -109,10 +109,12 @@ To ensure compatibility and ease of use, the following components are **automati
 | packages              | no            | contains packages list and description for install    |
 | function.sh           | no            | kind of framework used by all the scripts             |
 | generate_package.sh   | no            | see below : tries to generate package description     |
+| library.sh            | no            | contains helper function for post-processing script   |
 | LICENCE               | no            | read it :)                                            |
 | logo.png              | no            | thank you chatGPT                                     |
 | main.config           | no            | global parameters common to all scripts               |
 | package.sh            | no            | see below : install packages on amiga partitions      |
+| pp-template.sh        | no            | Template and example of a post-processing script      |
 | partitions.config     | no            | example of partition scheme used by setup_disk.sh     |
 | README.md             | no            | you're reading it                                     |
 | setup_disk.sh         | no            | see below : initialize disk for PiStorm               |
@@ -123,16 +125,18 @@ This are idea I would like to add in future versions with no particular order.
 
 - Out of the box PiStorm configuration for Miami
 - More glowicons replacements for applications
-- Make Drawer icons for Addons independant of workbench packages (MUI, Tasko, etc.)  
 - Better icons position on the workbench partition
 - Remove contribs from git and put then as assets on releases
 - Split Addons package in smaller part for a more refined install
-- Add package to set default Workbench Screen
+- Allow to set default Workbench Screen resolution
 - Add ECS / OCS games from my own selection (pimyretro.org)
 - Create an Amiga Tools that "backup" all settings and icons positions into a installable package
-- Check existsing library version before copying to Workbench:Libs in order not to replace a version with an older one
-- Create a profile mecanism that would apply selected package and configurations
+- Check existing library version before copying to Workbench:Libs in order not to replace a version with an older one
+- Create a profile mecanism that would apply an "out of the box" configuration with selected package and customisations
+- Add support for other workbench versions (at least 3.1)
+- Allows to create Amiga partitions without emu68 part 
 
+- [DONE] Make Drawer icons for Addons independant of workbench packages (MUI, Tasko, etc.)
 - [DONE] Add Native HDD game from ISO that do not contains CDDA tracks
 - [DONE] Test and document how to use ".icons" file to insert ToolsType
 - [DONE] Add a hook mecanism that allows executing a script just before transfering files to Amiga partitions

@@ -10,6 +10,7 @@
     - [Usage Example](#usage-example-1)
     - [Icons operations with ".icons" files](#icons-operations-with-icons-files)
       - [Icon types reference](#icon-types-reference)
+    - [Post processing script](#Post-processing-script)
   - [Creating packages](#creating-packages)
     - [Arguments \& Options](#arguments--options-2)
     - [Usage Example](#usage-example-2)
@@ -24,7 +25,7 @@ The `setup_disk.sh` script is responsible for the low-level preparation of the s
 
 Beware, some integrated sdcard reader (eg. in laptop) expose something like/dev/mmcblk0 but does not support low level IOCTL, making hst-imager unable to create Amiga partitions. 
 
->**note**: it is possible to a file instead of a real device.
+>**note**: it is possible to use a file instead of a real device.
 
 **Key actions done by the script:**
 
@@ -160,6 +161,35 @@ It is also possible to set tooltypes. In that case, the `newmeter.tooltypes` is 
 - **5**: trashcan
 - **7**: kickstart
 - **8**: appicon
+
+### Post processing script
+
+The parameters `--post-script` or `-s` of the `package.sh` command allows to do any post processing on the staging area, just before the copy to the final destination. The given script is executed in the staging directory, any Amiga partition are just folders.
+
+The script is also executed with a `context` that provides several variables and functions (defined in `library.sh`) which should be usefull to customise your installation without modifying or creating packages.
+
+Of course, as it is a bash script, you can do whatever you want with it...
+An example is given with the file `pp-template.sh`
+
+#### Available variables
+**$STAGING_ROOT** : path to the root of the staging directory. It contains one folder per partition (eg. "Workbench", "Apps", etc.)
+**$HSTA_BIN** : path to the hst-amiga executable
+**$HST_BIN** : path to the hst-imager executable
+
+#### Availabled logging functions
+log_info()
+log_success()
+log_error()
+log_warn()
+
+#### Available helper functions
+**enable_commodity(name)** : copy given commodity from Tools/Commodities to WBStartup
+**enable_dosdriver(name)** : copy given dosdriver from Storage/DOSDrivers to Devs/DOSDrivers
+**enable_monitor(name)** : copy given monitor from Storage/Monitors to Devs/Monitors
+**set_tooltypes(icon_path, tooltypes_string)** : replace icon tooltypes with the given one
+**use_deficon(icon_path, def_icon)** : replace (or create) given icon file with given system default 
+**set_icon(icon_path, icon_args)** : call hst.amiga icon update on icon with given arguments
+
 
 ## Creating packages
 
