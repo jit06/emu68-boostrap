@@ -172,23 +172,26 @@ Of course, as it is a bash script, you can do whatever you want with it...
 An example is given with the file `pp-template.sh`
 
 #### Available variables
-**$STAGING_ROOT** : path to the root of the staging directory. It contains one folder per partition (eg. "Workbench", "Apps", etc.)
-**$HSTA_BIN** : path to the hst-amiga executable
-**$HST_BIN** : path to the hst-imager executable
+
+- **$STAGING_ROOT** : path to the root of the staging directory. It contains one folder per partition (eg. "Workbench", "Apps", etc.)
+- **$HSTA_BIN** : path to the hst-amiga executable
+- **$HST_BIN** : path to the hst-imager executable
 
 #### Availabled logging functions
-log_info()
-log_success()
-log_error()
-log_warn()
+
+- log_info()
+- log_success()
+- log_error()
+- log_warn()
 
 #### Available helper functions
-**enable_commodity(name)** : copy given commodity from Tools/Commodities to WBStartup
-**enable_dosdriver(name)** : copy given dosdriver from Storage/DOSDrivers to Devs/DOSDrivers
-**enable_monitor(name)** : copy given monitor from Storage/Monitors to Devs/Monitors
-**set_tooltypes(icon_path, tooltypes_string)** : replace icon tooltypes with the given one
-**use_deficon(icon_path, def_icon)** : replace (or create) given icon file with given system default 
-**set_icon(icon_path, icon_args)** : call hst.amiga icon update on icon with given arguments
+
+- **enable_commodity(name)** : copy given commodity from Tools/Commodities to WBStartup
+- **enable_dosdriver(name)** : copy given dosdriver from Storage/DOSDrivers to Devs/DOSDrivers
+- **enable_monitor(name)** : copy given monitor from Storage/Monitors to Devs/Monitors
+- **set_tooltypes(icon_path, tooltypes_string)** : replace icon tooltypes with the given one
+- **use_deficon(icon_path, def_icon)** : replace (or create) given icon file with given system default 
+- **set_icon(icon_path, icon_args)** : call hst.amiga icon update on icon with given arguments
 
 
 ## Creating packages
